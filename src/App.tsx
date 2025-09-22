@@ -1,16 +1,38 @@
-import { useState } from "react";
-import { Button } from "./components/ui/button";
+// import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
+// import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { Home } from "./pages/Home";
+import { DataProvider } from "./api/providers/DataProvider";
+// import { DataProvider } from "./providers/DataProvider";
+// import Index from "./pages/Index";
+// import Groups from "./pages/Groups";
+// import GroupDetail from "./pages/GroupDetail";
+// import ShiftDetail from "./pages/ShiftDetail";
+// import NotFound from "./pages/NotFound";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <h1 className="text-3xl font-bold">Hello world!</h1>
-      <Button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </Button>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <DataProvider>
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              {/* <Route path="/groups" element={<Groups />} /> */}
+              {/* <Route path="/groups/:id" element={<GroupDetail />} /> */}
+              {/* <Route path="/shifts/:id" element={<ShiftDetail />} /> */}
+              {/* <Route path="*" element={<NotFound />} /> */}
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </DataProvider>
+    </QueryClientProvider>
   );
 }
 
