@@ -1,11 +1,12 @@
 /**
- * Create Group Dialog Component
- * Modal dialog for creating new groups
+ * Signup Dialog Component
+ * Modal dialog for signing up to shift positions
  */
 
-import { useState, type ReactNode } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   Dialog,
   DialogContent,
@@ -22,43 +23,45 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
-import type { CreateGroupForm, Group } from "../../models/types";
-import { createGroupSchema } from "../../lib/schemas";
+import { UserPlus } from "lucide-react";
+import type { SignupForm } from "../../models/types";
 
-interface CreateGroupDialogProps {
-  onCreateGroup: (data: CreateGroupForm) => Promise<Group | null>;
-  trigger?: ReactNode;
+const signupSchema = z.object({
+  notes: z.string().max(500, "Observações muito longas").optional(),
+});
+
+interface SignupDialogProps {
+  positionName: string;
+  onSignup: (data: SignupForm) => Promise<boolean>;
+  trigger?: React.ReactNode;
 }
 
-export function CreateGroupDialog({
-  onCreateGroup,
+export const SignupDialog: React.FC<SignupDialogProps> = ({
+  positionName,
+  onSignup,
   trigger,
-}: CreateGroupDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+}) => {
+  const [open, setOpen] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const form = useForm<CreateGroupForm>({
-    resolver: zodResolver(createGroupSchema),
+  const form = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      notes: "",
     },
   });
 
-  const onSubmit = async (data: CreateGroupForm) => {
+  const onSubmit = async (data: SignupForm) => {
     try {
       setIsSubmitting(true);
-      const result = await onCreateGroup(data);
+      const result = await onSignup(data);
       if (result) {
         form.reset();
         setOpen(false);
       }
     } catch (error) {
-      console.log(error);
       // Error handling is done in the parent component/hook
     } finally {
       setIsSubmitting(false);
@@ -66,9 +69,9 @@ export function CreateGroupDialog({
   };
 
   const defaultTrigger = (
-    <Button>
-      <Plus className="h-4 w-4 mr-2" />
-      Novo Grupo
+    <Button size="sm">
+      <UserPlus className="h-4 w-4 mr-1" />
+      Inscrever-se
     </Button>
   );
 
@@ -77,9 +80,10 @@ export function CreateGroupDialog({
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Criar Novo Grupo</DialogTitle>
+          <DialogTitle>Inscrever-se para {positionName}</DialogTitle>
           <DialogDescription>
-            Crie um novo grupo para organizar suas atividades voluntárias.
+            Confirme sua inscrição para esta posição. Você pode adicionar
+            observações opcionais.
           </DialogDescription>
         </DialogHeader>
 
@@ -87,27 +91,13 @@ export function CreateGroupDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome do Grupo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Ministério de Louvor" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição (opcional)</FormLabel>
+                  <FormLabel>Observações (opcional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Descreva o propósito e atividades do grupo..."
+                      placeholder="Adicione qualquer informação relevante para sua participação..."
                       rows={3}
                       {...field}
                     />
@@ -126,12 +116,8 @@ export function CreateGroupDialog({
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                variant={"secondary"}
-              >
-                {isSubmitting ? "Criando..." : "Criar Grupo"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Inscrevendo..." : "Confirmar Inscrição"}
               </Button>
             </div>
           </form>
@@ -139,4 +125,4 @@ export function CreateGroupDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};

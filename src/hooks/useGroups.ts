@@ -55,7 +55,7 @@ export const useGroups = () => {
       setGroups((prev) =>
         prev.map((group) => (group.id === id ? updatedGroup : group))
       );
-      toast.message("Sucesso", {
+      toast.success("Sucesso", {
         description: "Grupo atualizado com sucesso!",
       });
       return updatedGroup;

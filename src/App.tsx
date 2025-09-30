@@ -6,12 +6,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Home } from "./pages/Home";
 import { DataProvider } from "./api/providers/DataProvider";
-// import { DataProvider } from "./providers/DataProvider";
-// import Index from "./pages/Index";
-// import Groups from "./pages/Groups";
-// import GroupDetail from "./pages/GroupDetail";
-// import ShiftDetail from "./pages/ShiftDetail";
-// import NotFound from "./pages/NotFound";
+import { Groups } from "./pages/Group/Groups";
+import { GroupDetails } from "./pages/Group/GroupDetails";
+import { NotFound } from "./pages/NotFound";
+import { ShiftDetail } from "./pages/ShiftDetail";
+import { GroupSettings } from "./pages/Group/GroupSettings";
 
 const queryClient = new QueryClient();
 
@@ -24,10 +23,11 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
-              {/* <Route path="/groups" element={<Groups />} /> */}
-              {/* <Route path="/groups/:id" element={<GroupDetail />} /> */}
-              {/* <Route path="/shifts/:id" element={<ShiftDetail />} /> */}
-              {/* <Route path="*" element={<NotFound />} /> */}
+              <Route path="/groups" element={<Groups />} />
+              <Route path="/groups/:id" element={<GroupDetails />} />
+              <Route path="/groups/:id/settings" element={<GroupSettings />} />
+              <Route path="/shifts/:id" element={<ShiftDetail />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

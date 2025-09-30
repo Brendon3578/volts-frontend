@@ -76,6 +76,7 @@ export function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
+                variant={"secondary"}
                 onClick={() => navigate("/groups")}
                 className="cursor-pointer text-lg px-8 py-6"
               >

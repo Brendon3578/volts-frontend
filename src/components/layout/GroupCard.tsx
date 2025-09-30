@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Users, Calendar, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { GroupIconContainer } from "./../../pages/Group/GroupIcon";
 
 interface GroupCardProps {
   group: Group;
@@ -52,14 +53,22 @@ export function GroupCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg font-semibold text-foreground">
-              {group.name}
-            </CardTitle>
-            {group.description && (
-              <CardDescription className="mt-1 line-clamp-2">
-                {group.description}
-              </CardDescription>
-            )}
+            <div className="flex">
+              <GroupIconContainer
+                groupIconId={group.icon}
+                color={group.color}
+              />
+              <div>
+                <CardTitle className="text-lg font-semibold text-foreground">
+                  {group.name}
+                </CardTitle>
+                {group.description && (
+                  <CardDescription className="mt-1 line-clamp-2">
+                    {group.description}
+                  </CardDescription>
+                )}
+              </div>
+            </div>
           </div>
           {isJoined && (
             <Badge variant="secondary" className="ml-2 shrink-0">
@@ -85,7 +94,7 @@ export function GroupCard({
           <div className="flex items-center gap-2">
             {showJoinButton && (
               <Button
-                variant={isJoined ? "outline" : "default"}
+                variant={isJoined ? "outline" : "secondary"}
                 size="sm"
                 onClick={handleJoinLeave}
                 className="shrink-0"

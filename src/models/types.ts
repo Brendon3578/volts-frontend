@@ -53,6 +53,10 @@ export interface Group {
   // Computed fields for UI
   memberCount?: number;
   upcomingShiftsCount?: number;
+
+  color?: string;
+  imageUrl?: string;
+  icon?: string;
 }
 
 export interface Position {
@@ -141,6 +145,9 @@ export interface ShiftWithDetails extends Shift {
 export interface CreateGroupForm {
   name: string;
   description?: string;
+  color?: string;
+  imageUrl?: string;
+  icon?: string;
 }
 
 export interface CreatePositionForm {

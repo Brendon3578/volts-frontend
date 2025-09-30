@@ -19,8 +19,8 @@ import type {
   CreateShiftForm,
   SignupForm,
   DashboardSummary,
-  VolunteerStatus,
-  ShiftStatus,
+  VolunteerStatusType,
+  ShiftStatusType,
 } from "../../models/types";
 
 export interface IDataAdapter {
@@ -54,7 +54,7 @@ export interface IDataAdapter {
   createShift(data: CreateShiftForm): Promise<Shift>;
   updateShift(id: string, data: Partial<CreateShiftForm>): Promise<Shift>;
   deleteShift(id: string): Promise<void>;
-  updateShiftStatus(id: string, status: ShiftStatus): Promise<Shift>;
+  updateShiftStatus(id: string, status: ShiftStatusType): Promise<Shift>;
 
   // Shift Volunteering
   signupForShift(
@@ -67,7 +67,7 @@ export interface IDataAdapter {
 
   updateVolunteerStatus(
     shiftVolunteerId: string,
-    status: VolunteerStatus
+    status: VolunteerStatusType
   ): Promise<ShiftVolunteer>;
 
   getMySignups(userId?: string): Promise<
