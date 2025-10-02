@@ -5,46 +5,18 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useGroup, useGroups } from "../../hooks/useGroups";
-import { useShifts } from "../../hooks/useShifts";
-import { usePositions } from "../../hooks/usePositions";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Skeleton } from "../../components/ui/skeleton";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
-import { ShiftCard } from "../../components/layout/ShiftCard";
-import { CreateShiftDialog } from "../../components/layout/CreateShiftDialog";
-import {
-  ArrowLeft,
-  Users,
-  Calendar,
-  Settings,
-  Plus,
-  MapPin,
-  Clock,
-  User,
-  Upload,
-  CircleOff,
-} from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useAuthentication } from "../../hooks/useAuthentication";
+import { ArrowLeft, Users, CircleOff } from "lucide-react";
 import { Input } from "../../components/ui/input";
-import { PositionFormDialog } from "../../components/layout/PositionFormDialog";
-import { PositionsTable } from "../../components/layout/tables/PositionsTable";
 import {
   Form,
   FormControl,
@@ -56,7 +28,7 @@ import {
 import { Textarea } from "../../components/ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import type { CreateGroupForm } from "../../models/types";
-import { memo, useCallback, useState, type ReactNode } from "react";
+import { memo, useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createGroupSchema } from "../../lib/schemas";
 import AdvancedImageUpload from "../../components/layout/GroupImageUpload";
@@ -69,7 +41,7 @@ export function GroupSettings() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { group, loading: groupLoading, refetch } = useGroup(id!);
-  const { updateGroup, deleteGroup } = useGroups();
+  const { updateGroup } = useGroups();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateGroupForm>({
@@ -88,7 +60,8 @@ export function GroupSettings() {
     try {
       setIsSubmitting(true);
 
-      const result = await updateGroup(id, data);
+      // const result =
+      await updateGroup(id, data);
 
       refetch();
     } catch (error) {

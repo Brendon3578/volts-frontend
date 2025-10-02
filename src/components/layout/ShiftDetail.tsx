@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { ShiftStatusType, VolunteerStatusType } from "../../models/types";
+import type { VolunteerStatusType } from "../../models/types";
 import { ShiftStatus, VolunteerStatus } from "../../models/constants";
 
 const ShiftDetail: React.FC = () => {

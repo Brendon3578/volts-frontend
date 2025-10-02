@@ -704,6 +704,9 @@ class LocalStorageAdapter implements IDataAdapter {
 
   async cancelSignup(shiftVolunteerId: string, userId?: string): Promise<void> {
     await this.delay();
+
+    console.log(userId);
+
     const shiftVolunteers = this.getFromStorage<ShiftVolunteer>(
       this.KEYS.SHIFT_VOLUNTEERS
     );

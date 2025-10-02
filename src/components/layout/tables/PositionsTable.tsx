@@ -7,14 +7,14 @@ import {
   TableRow,
 } from "../../ui/table";
 import { Button } from "../../ui/button";
-import { Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import type {
   CreatePositionForm,
   GroupWithDetails,
   Position,
 } from "../../../models/types";
 import { PositionFormDialog } from "../PositionFormDialog";
-import { memo, useCallback } from "react";
+import { memo } from "react";
 
 interface PositionsTableProps {
   positions: Position[];

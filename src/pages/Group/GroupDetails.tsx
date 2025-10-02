@@ -35,9 +35,7 @@ import {
   User,
 } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useAuthentication } from "../../hooks/useAuthentication";
-import { Input } from "../../components/ui/input";
 import { PositionFormDialog } from "../../components/layout/PositionFormDialog";
 import { PositionsTable } from "../../components/layout/tables/PositionsTable";
 import { GroupTitle } from "./GroupTitle";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { X, Upload, ImageIcon } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type GroupImageUploadProps = {

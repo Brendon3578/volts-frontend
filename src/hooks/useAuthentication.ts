@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { User } from "../models/types";
 import { useDataAdapter } from "../api/providers/DataProvider";
 
@@ -8,7 +8,7 @@ export function useAuthentication() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -20,11 +20,11 @@ export function useAuthentication() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [adapter]);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   return {
     user,

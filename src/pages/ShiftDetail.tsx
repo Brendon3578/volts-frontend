@@ -3,7 +3,6 @@
  * Shows detailed information about a specific shift
  */
 
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useShift } from "../hooks/useShifts";
 import {
@@ -31,7 +30,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { ShiftStatusType, VolunteerStatusType } from "../models/types";
+import type { VolunteerStatusType } from "../models/types";
 import { ShiftStatus, VolunteerStatus } from "../models/constants";
 
 export function ShiftDetail() {

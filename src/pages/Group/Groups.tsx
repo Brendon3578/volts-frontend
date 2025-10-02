@@ -10,7 +10,7 @@ import { Input } from "../../components/ui/input";
 import { Skeleton } from "../../components/ui/skeleton";
 import { GroupCard } from "../../components/layout/GroupCard";
 import { CreateGroupDialog } from "../../components/layout/CreateGroupDialog";
-import { Search, Filter, Users, Activity, ArrowLeft } from "lucide-react";
+import { Search, Users, Activity, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
