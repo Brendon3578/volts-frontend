@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Users, Calendar, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { GroupIconContainer } from "./../../pages/Group/GroupIcon";
+import { GroupIconContainer } from "../../pages/Group/GroupIconContainer";
 
 interface GroupCardProps {
   group: Group;
@@ -49,7 +49,7 @@ export function GroupCard({
   };
 
   return (
-    <Card className="card-elevated cursor-pointer" onClick={handleViewDetails}>
+    <Card className="card-elevated " onClick={handleViewDetails}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">

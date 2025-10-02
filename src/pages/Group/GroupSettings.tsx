@@ -166,7 +166,7 @@ export function GroupSettings() {
         <section className="mb-8">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar aos Grupos
+            Voltar
           </Button>
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">

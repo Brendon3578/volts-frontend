@@ -52,6 +52,7 @@ export function GroupDetails() {
     loading: positionsLoading,
     createPosition,
     updatePosition,
+    deletePosition,
   } = usePositions(id);
 
   const { user } = useAuthentication();
@@ -273,7 +274,7 @@ export function GroupDetails() {
                   positions={positions}
                   group={group}
                   onUpdatePosition={updatePosition}
-                  onDeletePosition={async (p) => console.log("Delete", p)}
+                  onDeletePosition={(p) => deletePosition(p.id)}
                 />
 
                 {/* {positionsLoading ? (

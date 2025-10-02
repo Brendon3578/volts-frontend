@@ -24,7 +24,7 @@ interface PositionsTableProps {
     id: string,
     data: Partial<CreatePositionForm>
   ) => Promise<Position | null>;
-  onDeletePosition: (position: Position) => Promise<void>;
+  onDeletePosition: (position: Position) => Promise<boolean>;
 }
 
 export function PositionsTable({

@@ -10,12 +10,14 @@ import { Input } from "../../components/ui/input";
 import { Skeleton } from "../../components/ui/skeleton";
 import { GroupCard } from "../../components/layout/GroupCard";
 import { CreateGroupDialog } from "../../components/layout/CreateGroupDialog";
-import { Search, Filter, Users, Activity } from "lucide-react";
+import { Search, Filter, Users, Activity, ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Groups() {
   const { groups, loading, createGroup, joinGroup, leaveGroup } = useGroups();
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const filteredGroups = groups.filter(
     (group) =>
@@ -57,7 +59,15 @@ export function Groups() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <section className="mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/discover")}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar à Página Inicial
+          </Button>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-foreground">Grupos</h1>
@@ -92,7 +102,7 @@ export function Groups() {
               Filtros
             </Button> */}
           </div>
-        </div>
+        </section>
 
         {/* Groups Grid */}
         {filteredGroups.length > 0 ? (
