@@ -75,19 +75,19 @@ const HomeInfoList = [
 
 function HomeCard({ title, imageUrl, color, description }: homeCard) {
   return (
-    <div className="group relative w-100 h-100 flex flex-col items-center justify-end gap-2 font-poppins hover:scale-105 transition-transform">
-      <h6 className="z-20  text-3xl font-bold mb-auto text-neutral-800 text-shadow-xs">
+    <div className="group relative md:size-100 size-80 flex flex-col items-center justify-end gap-2 font-poppins hover:scale-105 transition-transform">
+      <h6 className="z-40 text-2xl md:text-3xl font-bold mb-auto text-neutral-800 text-shadow-xs">
         {title}
       </h6>
       <p
-        className="z-30 px-4 h-22 flex items-center justify-center  text-center font-semibold rounded-2xl shadow-lg"
+        className="z-30 px-4 h-22 flex items-center justify-center text-sm md:text-base text-center font-semibold rounded-2xl shadow-lg"
         style={{ background: color }}
       >
         {description}
       </p>
       <img
         src={imageUrl}
-        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 size-80 object-contain"
+        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 size-60 md:size-80 object-contain"
       />
       <div
         className="z-10 absolute w-[calc(100%+32px)] h-[calc(88px+32px)] -bottom-4 border rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity delay-100"
@@ -126,20 +126,20 @@ export function Home() {
         </div>
       </header>
 
-      <section className="relative md:h-[624px] h-[calc(100vh-80px-100px)] bg-linear-to-br from-primary/80 via-sky-500 to-indigo-500/80 w-full">
+      <section className="relative md:h-[624px] h-[calc(100vh-80px)] bg-linear-to-br from-primary/80 via-sky-500 to-indigo-500/80 w-full">
         <img
           src={HeroImage}
           className="z-10 absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(70vw,782px)] object-cover"
         />
 
         <div className="relative z-20 px-10 py-5 pt-20 flex flex-col md:justify-end h-full gap-6 max-w-7xl mx-auto">
-          <h3 className="text-white font-poppins font-bold text-6xl text-shadow-xl">
+          <h3 className="text-white font-poppins font-bold text-5xl md:text-6xl text-shadow-xl text-center md:text-left">
             Sua Energia Transforma
           </h3>
-          <p className=" text-white font-poppins font-bold text-3xl text-shadow-lg max-w-5xl">
+          <p className=" text-white font-poppins font-bold text-xl md:text-3xl text-shadow-lg max-w-5xl text-center md:text-left">
             A plataforma completa para conectar, organizar e engajar voluntários
           </p>
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-6 md:mt-4 mt-10 justify-center md:justify-start">
             <Button
               size="xl"
               variant="secondary"
@@ -162,7 +162,7 @@ export function Home() {
 
       <section className="py-25 sm:px-8 px-2 w-full bg-linear-to-br from-white to-neutral-50 border-b border-slate-300">
         <div className="container mx-auto flex flex-col items-center">
-          <h3 className="font-poppins text-5xl md:text-6xl font-bold text-neutral-800 mb-10 text-shadow-md text-center">
+          <h3 className="font-poppins text-3xl md:text-6xl font-bold text-neutral-800 mb-10 text-shadow-md text-center">
             Descubra o Poder do Voluntariado
           </h3>
           <div className="flex flex-wrap justify-center gap-10 mt-10 mb-20">
@@ -181,10 +181,10 @@ export function Home() {
 
       <section className="py-25 sm:px-8 px-2 w-full bg-linear-to-br from-white to-neutral-50">
         <div className="container mx-auto flex flex-col items-center">
-          <h3 className="font-poppins text-5xl md:text-6xl font-bold text-neutral-800 mb-10 text-shadow-md text-center">
+          <h3 className="font-poppins text-4xl md:text-6xl font-bold text-neutral-800 mb-10 text-shadow-md text-center">
             Menos caos, mais impacto.
           </h3>
-          <h5 className="font-poppins text-xl md:text-2xl  text-neutral-800 mb-10 text-shadow-md text-center">
+          <h5 className="font-poppins md:text-2xl  text-neutral-800 mb-10 text-shadow-md text-center">
             A ferramenta completa para organizar, engajar e mensurar o trabalho
             da sua equipe de voluntários.
           </h5>
@@ -203,13 +203,13 @@ export function Home() {
                   return (
                     <li key={info.key} className="mb-6 flex gap-4">
                       <info.icon
-                        className={`size-8 min-w-8 mt-1 ${info.color}`}
+                        className={`size-6 md:size-8 min-w-8 mt-1 ${info.color}`}
                       />
                       <div>
-                        <h6 className="font-poppins text-2xl font-bold text-neutral-800 mb-2">
+                        <h6 className="font-poppins text-xl md:text-2xl font-bold text-neutral-800 mb-2">
                           {info.title}
                         </h6>
-                        <p className="font-poppins text-lg text-neutral-700 max-w-xl">
+                        <p className="font-poppins text-base md:text-lg text-neutral-700 max-w-xl">
                           {info.description}
                         </p>
                       </div>
@@ -229,9 +229,9 @@ export function Home() {
         </div>
       </section>
 
-      <footer className="py-8 px-10 w-full flex justify-between bg-slate-300/40 border-t border-slate-300 text-slate-600 font-semibold font-poppins text-center ">
+      <footer className="py-8 px-10 text-sm md:text-base w-full flex flex-col md:flex-row justify-between bg-slate-300/40 border-t border-slate-300 text-slate-600 font-semibold font-poppins text-center gap-8 md:gap-4">
         <p>Volts &copy; 2025. Todos os direitos reservados.</p>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-2 md:gap-4">
           <a href="#" className="hover:underline">
             Política de Privacidade
           </a>
