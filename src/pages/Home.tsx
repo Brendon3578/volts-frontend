@@ -2,6 +2,15 @@ import { ChartColumn, SquareCheckBig } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
+// Import images
+import VoltsLogo from "@/assets/Volts_lg.svg";
+import VoltsName from "@/assets/Volts_lg_name.svg";
+import HeroImage from "@/assets/landing-page-hero-image.png";
+import EncontreSuaCausa from "@/assets/Encontre_sua_causa 1.png";
+import FacaADiferenca from "@/assets/Faca_a_diferenca 1.png";
+import CrescaInspire from "@/assets/creca_inspire 1.png";
+import RobsonImage from "@/assets/Robson_ta 1.png";
+
 type homeCard = {
   key: string;
   title: string;
@@ -17,7 +26,7 @@ const homeCardsDetailsList: homeCard[] = [
     color: "#ECCB54",
     description:
       "Explore diversas oportunidades e encontre projetos que se alinham com suas paixões e habilidades",
-    imageUrl: "/src/assets/Encontre_sua_causa 1.png",
+    imageUrl: EncontreSuaCausa,
   },
   {
     key: "faca_a_diferenca",
@@ -25,7 +34,7 @@ const homeCardsDetailsList: homeCard[] = [
     color: "#EA703C",
     description:
       "Contribua com seu tempo e talento para causas importantes e veja o impacto real de suas ações.",
-    imageUrl: "/src/assets/Faca_a_diferenca 1.png",
+    imageUrl: FacaADiferenca,
   },
   {
     key: "creca_inspire",
@@ -33,7 +42,7 @@ const homeCardsDetailsList: homeCard[] = [
     color: "#49B5AE",
     description:
       "Desenvolva novas habilidades, conheça pessoas incríveis e inspire outros a se juntarem ao movimento.",
-    imageUrl: "/src/assets/creca_inspire 1.png",
+    imageUrl: CrescaInspire,
   },
 ];
 
@@ -100,8 +109,8 @@ export function Home() {
       <header className="bg-gray-50 border-b-gray-500/50 border shadow-2xl flex items-center justify-center h-20 w-full  px-8 ">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/src/assets/Volts_lg.svg" className="size-15" />
-            <img src="/src/assets/Volts_lg_name.svg" className="h-10" />
+            <img src={VoltsLogo} className="size-15" />
+            <img src={VoltsName} className="h-10" />
           </div>
           <ul className="flex gap-2">
             <li>
@@ -119,7 +128,7 @@ export function Home() {
 
       <section className="relative md:h-[624px] h-[calc(100vh-80px-100px)] bg-linear-to-br from-primary/80 via-sky-500 to-indigo-500/80 w-full">
         <img
-          src="/src/assets/landing-page-hero-image.png"
+          src={HeroImage}
           className="z-10 absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(70vw,782px)] object-cover"
         />
 
@@ -183,7 +192,7 @@ export function Home() {
           <div className="flex flex-col-reverse lg:flex-row items-center justify-between w-full max-w-6xl gap-8">
             <div>
               <img
-                src="/src/assets/Robson_ta 1.png"
+                src={RobsonImage}
                 alt="robson"
                 className="object-cover h-[min(600px,70vw)]"
               />

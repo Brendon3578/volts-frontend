@@ -1,5 +1,6 @@
 import { useDashboard } from "../hooks/useDashboard.ts";
 import { useGroups } from "../hooks/useGroups.ts";
+import VoltsLogo from "@/assets/Volts_lg.svg";
 import {
   Card,
   CardContent,
@@ -63,7 +64,7 @@ export function Dashboard() {
         <div className="container mx-auto px-4 py-28">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-2 mb-2">
-              <img src="/src/assets/Volts_lg.svg" className="size-20" />
+              <img src={VoltsLogo} className="size-20" />
               <h2 className="text-5xl font-bold">Volts</h2>
             </div>
             <h1 className="text-3xl md:text-6xl font-bold mb-6">
