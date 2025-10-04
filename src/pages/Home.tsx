@@ -1,4 +1,4 @@
-import { ChartColumn, SquareCheckBig } from "lucide-react";
+import { ChartColumn, ChevronRight, Menu, SquareCheckBig } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,13 @@ import EncontreSuaCausa from "@/assets/Encontre_sua_causa 1.png";
 import FacaADiferenca from "@/assets/Faca_a_diferenca 1.png";
 import CrescaInspire from "@/assets/creca_inspire 1.png";
 import RobsonImage from "@/assets/Robson_ta 1.png";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../components/ui/sheet";
 
 type homeCard = {
   key: string;
@@ -112,7 +119,55 @@ export function Home() {
             <img src={VoltsLogo} className="size-15" />
             <img src={VoltsName} className="h-10" />
           </div>
-          <ul className="flex gap-2">
+
+          {/* Menu Mobile */}
+          <div className="block sm:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="icon" variant={"outline"} className="size-10">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="top" className="p-2 pb-4 rounded-b-md">
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2">
+                    <img src={VoltsLogo} className="size-10" alt="Volts Logo" />
+                    <img src={VoltsName} className="h-8" alt="Volts Name" />
+                  </SheetTitle>
+                </SheetHeader>
+                <nav className="mt-6 flex flex-col gap-3 px-2">
+                  <Button
+                    variant="ghost"
+                    className="justify-between w-full text-lg p-6"
+                  >
+                    Recursos
+                    <span>
+                      <ChevronRight />
+                    </span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="justify-between w-full text-lg p-6"
+                  >
+                    Comunidade
+                    <span>
+                      <ChevronRight />
+                    </span>
+                  </Button>
+                  <hr className="border-neutral-300 my-4" />
+                  <Button
+                    onClick={() => navigate("/discover")}
+                    className=" w-full text-lg py-6"
+                  >
+                    Entrar
+                  </Button>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Menu Desktop */}
+          <ul className="hidden sm:flex gap-2">
             <li>
               <Button variant="link">Recursos</Button>
             </li>
