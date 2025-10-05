@@ -15,6 +15,7 @@ import type {
 } from "../../../models/types";
 import { PositionFormDialog } from "../PositionFormDialog";
 import { memo } from "react";
+import { ConfirmActionDialog } from "./../../common/ConfirmActionDialog";
 
 interface PositionsTableProps {
   positions: Position[];
@@ -100,14 +101,22 @@ const PositionRow = memo(function PositionRow({
               </Button>
             }
           />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onDelete(position)}
-          >
-            <Trash2 className="h-4 w-4 mr-1" />
-            Deletar
-          </Button>
+
+          <ConfirmActionDialog
+            trigger={
+              <Button variant="outline" size="sm">
+                <Trash2 className="h-4 w-4 mr-1" />
+                Deletar
+              </Button>
+            }
+            title="Deletar posição"
+            description={`Tem certeza que deseja deletar a posição "${position.name}"? Esta ação não pode ser desfeita.`}
+            confirmLabel="Deletar"
+            variant="destructive"
+            onConfirm={async () => {
+              await onDelete(position);
+            }}
+          />
         </div>
       </TableCell>
     </TableRow>
