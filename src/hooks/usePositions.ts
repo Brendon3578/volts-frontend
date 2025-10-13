@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { useDataAdapter } from "../api/providers/DataProvider";
-import type { Position, CreatePositionForm } from "../models/types";
+import type { Position, CreatePositionForm } from "../models";
 import { toast } from "sonner";
 
 export const usePositions = (groupId?: string) => {

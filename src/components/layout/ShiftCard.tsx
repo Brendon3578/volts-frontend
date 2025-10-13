@@ -4,8 +4,8 @@
  */
 
 import React from "react";
-import type { Shift, ShiftStatusType } from "../../models/types";
-import { ShiftStatus } from "../../models/constants";
+import type { Shift, ShiftStatusType } from "../../models";
+import { ShiftStatus } from "../../models";
 import {
   Card,
   CardContent,

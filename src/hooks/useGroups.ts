@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { useDataAdapter } from "../api/providers/DataProvider";
-import type { Group, GroupWithDetails, CreateGroupForm } from "../models/types";
+import type { Group, GroupWithDetails, CreateGroupForm } from "../models";
 import { toast } from "sonner";
 
 export const useGroups = () => {

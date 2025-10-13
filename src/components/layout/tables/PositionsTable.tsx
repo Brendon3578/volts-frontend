@@ -12,7 +12,7 @@ import type {
   CreatePositionForm,
   GroupWithDetails,
   Position,
-} from "../../../models/types";
+} from "../../../models";
 import { PositionFormDialog } from "../PositionFormDialog";
 import { memo } from "react";
 import { ConfirmActionDialog } from "./../../common/ConfirmActionDialog";

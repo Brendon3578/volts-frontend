@@ -27,7 +27,7 @@ import {
 } from "../../components/ui/form";
 import { Textarea } from "../../components/ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
-import type { CreateGroupForm } from "../../models/types";
+import type { CreateGroupForm } from "../../models";
 import { memo, useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createGroupSchema } from "../../lib/schemas";

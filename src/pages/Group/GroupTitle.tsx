@@ -1,5 +1,5 @@
 import { memo } from "react";
-import type { GroupWithDetails } from "../../models/types";
+import type { GroupWithDetails } from "../../models";
 import { GroupIconContainer } from "./GroupIconContainer";
 
 interface GroupTitleProps {

@@ -17,11 +17,11 @@ import type {
   CreateGroupForm,
   CreatePositionForm,
   CreateShiftForm,
-  SignupForm,
+  SignupPositionForm,
   DashboardSummary,
   VolunteerStatusType,
   ShiftStatusType,
-} from "../../models/types";
+} from "../../models";
 
 export interface IDataAdapter {
   // Dashboard
@@ -59,7 +59,7 @@ export interface IDataAdapter {
   // Shift Volunteering
   signupForShift(
     shiftPositionId: string,
-    data: SignupForm,
+    data: SignupPositionForm,
     userId?: string
   ): Promise<ShiftVolunteer>;
 

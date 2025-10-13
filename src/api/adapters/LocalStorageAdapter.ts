@@ -3,11 +3,7 @@
  * Implements IDataAdapter using browser localStorage for data persistence
  */
 
-import {
-  GroupRole,
-  ShiftStatus,
-  VolunteerStatus,
-} from "../../models/constants";
+import { GroupRole, ShiftStatus, VolunteerStatus } from "../../models";
 import type {
   Group,
   GroupWithDetails,
@@ -21,11 +17,11 @@ import type {
   CreateGroupForm,
   CreatePositionForm,
   CreateShiftForm,
-  SignupForm,
+  SignupPositionForm,
   DashboardSummary,
   ShiftStatusType,
   VolunteerStatusType,
-} from "../../models/types";
+} from "../../models";
 
 import type { IDataAdapter } from "./IDataAdapter";
 
@@ -649,7 +645,7 @@ class LocalStorageAdapter implements IDataAdapter {
 
   async signupForShift(
     shiftPositionId: string,
-    data: SignupForm,
+    data: SignupPositionForm,
     userId?: string
   ): Promise<ShiftVolunteer> {
     await this.delay();

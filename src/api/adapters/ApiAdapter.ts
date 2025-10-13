@@ -17,12 +17,12 @@ import type {
   CreateGroupForm,
   CreatePositionForm,
   CreateShiftForm,
-  SignupForm,
+  SignupPositionForm,
   DashboardSummary,
   VolunteerStatusType,
   ShiftStatusType,
   ApiResponse,
-} from "../../models/types";
+} from "../../models";
 import type { IDataAdapter } from "./IDataAdapter";
 
 class ApiAdapter implements IDataAdapter {
@@ -205,7 +205,7 @@ class ApiAdapter implements IDataAdapter {
   // Shift Volunteering
   async signupForShift(
     shiftPositionId: string,
-    data: SignupForm,
+    data: SignupPositionForm,
     userId?: string
   ): Promise<ShiftVolunteer> {
     return this.request<ShiftVolunteer>(

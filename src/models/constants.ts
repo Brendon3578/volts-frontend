@@ -23,3 +23,17 @@ export const VolunteerStatus = {
   PENDING: "PENDING",
   CANCELLED: "CANCELLED",
 } as const;
+
+export const Gender = {
+  MALE: "male",
+  FEMALE: "female",
+  OTHER: "other",
+  PREFER_NOT_TO_SAY: "prefer_not_to_say",
+} as const;
+
+export const GenderOptions = [
+  { value: Gender.MALE, label: "Masculino" },
+  { value: Gender.FEMALE, label: "Feminino" },
+  { value: Gender.OTHER, label: "Outro" },
+  { value: Gender.PREFER_NOT_TO_SAY, label: "Prefiro não dizer" },
+] as const;

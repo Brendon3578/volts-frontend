@@ -28,7 +28,7 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Plus, Minus } from "lucide-react";
-import type { CreateShiftForm, Position, Shift } from "../../models/types";
+import type { CreateShiftForm, Position, Shift } from "../../models";
 
 const createShiftSchema = z.object({
   title: z.string().max(100, "Título muito longo").optional(),

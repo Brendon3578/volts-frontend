@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface ConfirmActionDialogProps {
   title: string;
@@ -49,6 +49,8 @@ export const ConfirmActionDialog = memo(function ConfirmActionDialog({
     }
   }, [onConfirm]);
 
+  console.log("oi");
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
@@ -69,7 +71,12 @@ export const ConfirmActionDialog = memo(function ConfirmActionDialog({
           >
             {cancelLabel}
           </Button>
-          <Button onClick={handleConfirm} variant={variant} disabled={loading}>
+          <Button
+            onClick={handleConfirm}
+            variant={variant}
+            disabled={loading}
+            className="min-w-22"
+          >
             {loading ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (

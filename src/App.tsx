@@ -12,6 +12,8 @@ import { NotFound } from "./pages/NotFound";
 import { ShiftDetail } from "./pages/ShiftDetail";
 import { GroupSettings } from "./pages/Group/GroupSettings";
 import { Home } from "./pages/Home";
+import { Login } from "./pages/Authentication/Login";
+import { SignUp } from "./pages/Authentication/SignUp";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/sign-up" element={<SignUp />} />
               <Route path="/discover" element={<Dashboard />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/groups/:id" element={<GroupDetails />} />

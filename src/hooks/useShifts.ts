@@ -11,8 +11,8 @@ import type {
   CreateShiftForm,
   ShiftStatusType,
   VolunteerStatusType,
-  SignupForm,
-} from "../models/types";
+  SignupPositionForm,
+} from "../models";
 import { toast } from "sonner";
 
 export const useShifts = (groupId?: string) => {
@@ -153,7 +153,7 @@ export const useShift = (id: string) => {
 
   const signupForShift = async (
     shiftPositionId: string,
-    data: SignupForm
+    data: SignupPositionForm
   ): Promise<boolean> => {
     try {
       await adapter.signupForShift(shiftPositionId, data);

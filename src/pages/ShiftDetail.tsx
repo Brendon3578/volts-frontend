@@ -15,7 +15,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
-import { SignupDialog } from "../components/layout/SignupDialog";
+import { SignupPositionDialog } from "../components/layout/SignupPositionDialog";
 import {
   ArrowLeft,
   Calendar,
@@ -30,8 +30,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { VolunteerStatusType } from "../models/types";
-import { ShiftStatus, VolunteerStatus } from "../models/constants";
+import type { VolunteerStatusType } from "../models";
+import { ShiftStatus, VolunteerStatus } from "../models";
 
 export function ShiftDetail() {
   const { id } = useParams<{ id: string }>();
@@ -251,7 +251,7 @@ export function ShiftDetail() {
                               shift.status === ShiftStatus.OPEN &&
                               shiftPosition.volunteersCount <
                                 shiftPosition.requiredCount && (
-                                <SignupDialog
+                                <SignupPositionDialog
                                   positionName={shiftPosition.position.name}
                                   onSignup={(data) =>
                                     signupForShift(shiftPosition.id, data)

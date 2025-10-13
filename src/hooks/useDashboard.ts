@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import type { DashboardSummary } from "../models/types";
+import type { DashboardSummary } from "../models";
 import { toast } from "sonner";
 import { useDataAdapter } from "../api/providers/DataProvider";
 

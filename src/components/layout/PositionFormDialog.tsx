@@ -3,7 +3,7 @@ import type {
   CreatePositionForm,
   GroupWithDetails,
   Position,
-} from "../../models/types";
+} from "../../models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";

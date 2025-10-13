@@ -156,7 +156,7 @@ export function Home() {
                   </Button>
                   <hr className="border-neutral-300 my-4" />
                   <Button
-                    onClick={() => navigate("/discover")}
+                    onClick={() => navigate("/login")}
                     className=" w-full text-lg py-6"
                   >
                     Entrar
@@ -175,7 +175,7 @@ export function Home() {
               <Button variant="link">Comunidade</Button>
             </li>
             <li>
-              <Button onClick={() => navigate("/discover")}>Entrar</Button>
+              <Button onClick={() => navigate("/login")}>Entrar</Button>
             </li>
           </ul>
         </div>

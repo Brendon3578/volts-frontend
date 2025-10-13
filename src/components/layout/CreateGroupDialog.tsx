@@ -26,7 +26,7 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
-import type { CreateGroupForm, Group } from "../../models/types";
+import type { CreateGroupForm, Group } from "../../models";
 import { createGroupSchema } from "../../lib/schemas";
 
 interface CreateGroupDialogProps {

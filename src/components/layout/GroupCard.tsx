@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import type { Group } from "../../models/types";
+import type { Group } from "../../models";
 import {
   Card,
   CardContent,

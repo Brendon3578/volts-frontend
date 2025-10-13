@@ -26,19 +26,19 @@ import {
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { UserPlus } from "lucide-react";
-import type { SignupForm } from "../../models/types";
+import type { SignupPositionForm } from "../../models";
 
 const signupSchema = z.object({
   notes: z.string().max(500, "Observações muito longas").optional(),
 });
 
-interface SignupDialogProps {
+interface SignupPositionDialogProps {
   positionName: string;
-  onSignup: (data: SignupForm) => Promise<boolean>;
+  onSignup: (data: SignupPositionForm) => Promise<boolean>;
   trigger?: React.ReactNode;
 }
 
-export const SignupDialog: React.FC<SignupDialogProps> = ({
+export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
   positionName,
   onSignup,
   trigger,
@@ -46,14 +46,14 @@ export const SignupDialog: React.FC<SignupDialogProps> = ({
   const [open, setOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const form = useForm<SignupForm>({
+  const form = useForm<SignupPositionForm>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       notes: "",
     },
   });
 
-  const onSubmit = async (data: SignupForm) => {
+  const onSubmit = async (data: SignupPositionForm) => {
     try {
       setIsSubmitting(true);
       const result = await onSignup(data);

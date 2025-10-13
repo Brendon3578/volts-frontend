@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import type { User } from "../models/types";
+import type { User } from "../models";
 import { useDataAdapter } from "../api/providers/DataProvider";
 
 export function useAuthentication() {
