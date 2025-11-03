@@ -10,7 +10,9 @@ export const signupFormSchema = z
   .object({
     fullName: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
     email: z.email("Email inválido"),
-    birthDate: z.string().min(1, "Data de nascimento é obrigatória"),
+    birthDate: z.iso
+      .date("Data de nascimento inválida")
+      .min(1, "Data de nascimento é obrigatória"),
     gender: z.enum(
       [Gender.MALE, Gender.FEMALE, Gender.OTHER, Gender.PREFER_NOT_TO_SAY],
       { error: () => ({ message: "Gênero inválido" }) }

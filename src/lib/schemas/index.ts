@@ -1,2 +1,2 @@
 export * from "./groupSchema";
-export * from "./formSchema";
+export * from "./authFormSchema";

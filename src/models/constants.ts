@@ -2,7 +2,6 @@
 export const OrganizationRole = {
   OWNER: "OWNER",
   ADMIN: "ADMIN",
-  MANAGER: "MANAGER",
   MEMBER: "MEMBER",
 } as const;
 

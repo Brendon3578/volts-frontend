@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   signupFormSchema,
   type SignupFormData,
-} from "@/lib/schemas/formSchema";
+} from "@/lib/schemas/authFormSchema";
 import {
   Form,
   FormControl,
@@ -25,34 +25,61 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import logoImage from "@/assets/Volts_lg.png";
 import logoName from "@/assets/Volts_lg_name.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GenderOptions } from "@/models/constants";
 import { ArrowLeft, CornerDownLeft } from "lucide-react";
+import { useRegister } from "../../hooks/useRegister";
+import axios from "axios";
+import type { RegisterRequest } from "../../models/auth";
 
 export function SignUp() {
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      birthDate: "",
-      gender: undefined,
-      password: "",
-      confirmPassword: "",
-      termsAccepted: false,
+      //fullName: "",
+      //email: "",
+      //birthDate: "",
+      //gender: undefined,
+      //password: "",
+      //confirmPassword: "",
+      //termsAccepted: false,
+
+      fullName: "Brendon Gomes",
+      email: "teste@teste.com",
+      birthDate: "2010-10-10",
+      gender: "male",
+      password: "1234567", // placeholder password ignore it
+      confirmPassword: "1234567",
+      termsAccepted: true,
     },
   });
 
+  const navigate = useNavigate();
+  const { mutate: registerMutate, error, isError, isPending } = useRegister();
+
   const onSubmit = async (data: SignupFormData) => {
-    try {
-      console.log(data);
-      toast.message("Sucesso", {
-        description: "Cadastro realizado com sucesso!",
-      });
-      // Implement signup logic here
-    } catch (error) {
-      toast.error("Erro ao realizar cadastro");
-    }
+    const registerData: RegisterRequest = {
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
+      acceptedTerms: data.termsAccepted,
+      birthdate: data.birthDate,
+      confirmPassword: data.confirmPassword,
+      gender: data.gender,
+    };
+
+    registerMutate(registerData, {
+      onSuccess: () => {
+        toast.success("Cadastro realizado com sucesso!");
+        navigate("/groups");
+      },
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data);
+        }
+        toast.error("Erro ao realizar cadastro");
+      },
+    });
   };
 
   return (
@@ -213,8 +240,8 @@ export function SignUp() {
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Criar conta
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Criando conta..." : "Criar conta"}
             </Button>
 
             <p className="text-center text-sm text-neutral-700">

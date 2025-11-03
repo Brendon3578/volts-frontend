@@ -11,12 +11,25 @@ import logoImage from "../../assets/Volts_lg.png";
 import logoName from "../../assets/Volts_lg_name.png";
 import googleIcon from "../../assets/icons/google.svg";
 import { useForm } from "react-hook-form";
-import type { LoginForm } from "../../models";
+import type { LoginForm } from "../../models/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "../../lib/schemas";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { useLogin } from "../../hooks/useLogin";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
+  const navigate = useNavigate();
+  const login = useLogin();
+
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -26,14 +39,27 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    console.log(data);
+    login.mutate(data, {
+      onSuccess: () => {
+        toast.success("Login realizado com sucesso!");
+        // Delay navigation to allow toast to show
+        setTimeout(() => {
+          navigate("/groups");
+        }, 1000);
+      },
+      onError: (error) => {
+        toast.error("Falha ao fazer login. E-mail ou senha incorretos!");
+        console.log(error);
+        //console.error("Erro de login:", error);
+      },
+    });
   };
 
   return (
     <Form {...form}>
       <form
         className={"flex flex-col gap-6"}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
@@ -64,6 +90,7 @@ export function LoginForm() {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -82,13 +109,17 @@ export function LoginForm() {
                 <FormControl>
                   <Input id="password" type="password" required {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
 
           <Field>
-            <Button type="submit">Entrar</Button>
+            <Button type="submit" disabled={login.isPending}>
+              {login.isPending ? "Entrando..." : "Entrar"}
+            </Button>
           </Field>
+
           <FieldSeparator>Ou entre com</FieldSeparator>
           <Field>
             <Button variant="outline" type="button">

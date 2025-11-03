@@ -15,6 +15,20 @@ export interface Organization {
   address?: string;
   createdAt: Date;
   updatedAt: Date;
+  createdById: string; // Quem criou (automaticamente OWNER)
+}
+
+export interface OrganizationMember {
+  id: string;
+  userId: string;
+  organizationId: string;
+  role: OrganizationRoleType;
+  joinedAt: Date;
+  invitedById?: string; // Quem convidou
+
+  // Relacionamentos populados
+  user?: User;
+  organization?: Organization;
 }
 
 export interface User {
@@ -42,6 +56,19 @@ export interface Group {
   color?: string;
   imageUrl?: string;
   icon?: string;
+}
+
+export interface GroupMember {
+  id: string;
+  userId: string;
+  groupId: string;
+  role: GroupRoleType;
+  joinedAt: Date;
+  addedById?: string; // Quem adicionou
+
+  // Relacionamentos populados
+  user?: User;
+  group?: Group;
 }
 
 export interface Position {
@@ -108,6 +135,7 @@ export interface ShiftVolunteer {
   appliedAt: Date;
   confirmedAt?: Date;
   updatedAt: Date;
+  rejectedAt?: Date;
   user?: User;
   shiftPosition?: ShiftPosition;
 }
