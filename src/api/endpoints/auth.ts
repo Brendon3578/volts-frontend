@@ -1,9 +1,9 @@
-import api from "./client";
+import api from "../client";
 import type {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
-} from "../models/auth";
+} from "../../models/auth";
 
 // Função para registrar um novo usuário
 export const register = async (

@@ -71,13 +71,18 @@ export function SignUp() {
     registerMutate(registerData, {
       onSuccess: () => {
         toast.success("Cadastro realizado com sucesso!");
-        navigate("/groups");
+        navigate("/dashboard");
       },
       onError: (error) => {
+        let errorMessage = "";
         if (axios.isAxiosError(error)) {
-          console.log(error.response?.data);
+          const errorData = error.response?.data;
+          console.log(errorData);
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
         }
-        toast.error("Erro ao realizar cadastro");
+        toast.error(`Erro ao realizar cadastro ${errorMessage}`);
       },
     });
   };

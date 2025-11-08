@@ -8,8 +8,9 @@ import {
   UsersRound,
 } from "lucide-react";
 import { LoginForm } from "../../components/layout/LoginForm";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "../../components/ui/button";
+import { toast } from "sonner";
 
 const loginCardList = [
   {
@@ -35,6 +36,12 @@ const loginCardList = [
 ];
 
 export function Login() {
+  const [searchParams] = useSearchParams();
+  const errorQueryParam = searchParams.get("error");
+  if (errorQueryParam == "unauthorized") {
+    toast.error("Usuário não autenticado, faça o login novamente!");
+  }
+
   return (
     <div className="min-h-screen bg-background lg:grid grid-cols-2">
       <div className="relative hidden lg:flex items-center justify-center bg-linear-to-tr from-sky-700 via-blue-500 to-sky-300">

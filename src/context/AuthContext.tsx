@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { AuthState } from "../models/auth";
 import type { User } from "../models/models";
-import { clearAuthData, isAuthenticated } from "../api/auth";
+import { clearAuthData, isAuthenticated } from "../api/endpoints/auth";
 
 // Valor inicial do contexto
 const initialState: AuthState = {

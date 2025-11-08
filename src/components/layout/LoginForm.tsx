@@ -44,7 +44,7 @@ export function LoginForm() {
         toast.success("Login realizado com sucesso!");
         // Delay navigation to allow toast to show
         setTimeout(() => {
-          navigate("/groups");
+          navigate("/dashboard");
         }, 1000);
       },
       onError: (error) => {

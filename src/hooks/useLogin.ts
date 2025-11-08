@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { login as loginApi, saveAuthData } from "../api/auth";
+import { login as loginApi, saveAuthData } from "../api/endpoints/auth";
 import { useAuth } from "../context/AuthContext";
 import type { LoginRequest } from "../models/auth";
 

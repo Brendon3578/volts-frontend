@@ -13,8 +13,6 @@ export interface Organization {
   email: string;
   phone?: string;
   address?: string;
-  createdAt: Date;
-  updatedAt: Date;
   createdById: string; // Quem criou (automaticamente OWNER)
 }
 

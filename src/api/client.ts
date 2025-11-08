@@ -39,6 +39,10 @@ api.interceptors.response.use(
       localStorage.removeItem("auth_token");
       localStorage.removeItem("auth_user");
       localStorage.removeItem("auth_expires_at");
+
+      // redirecionar pra página de login se for token inválido
+      //console.log(error.response);
+      window.location.href = "/login?error=unauthorized";
     }
     return Promise.reject(error);
   }
