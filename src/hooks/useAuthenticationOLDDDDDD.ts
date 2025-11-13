@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { User } from "../models";
 import { useDataAdapter } from "../api/providers/DataProvider";
 
-export function useAuthentication() {
+export function useAuthenticationasdasdasds() {
   const adapter = useDataAdapter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);

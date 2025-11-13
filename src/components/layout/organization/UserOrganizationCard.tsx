@@ -8,10 +8,14 @@ import {
   CardDescription,
   CardContent,
 } from "../../ui/card";
+import {
+  GroupRoleToReadableFormat,
+  OrganizationRoleToReadableFormat,
+} from "../../../utils";
 
 export function UserOrganizationCard({ org }: { org: UserOrganization }) {
   return (
-    <Card key={org.organizationId} className="w-full">
+    <Card key={org.organizationId} className="w-full gap-2">
       <CardHeader>
         <div className="flex justify-between items-start">
           <Link
@@ -21,7 +25,9 @@ export function UserOrganizationCard({ org }: { org: UserOrganization }) {
             <CardTitle>{org.organizationName}</CardTitle>
             <CardDescription>{org.organizationDescription}</CardDescription>
           </Link>
-          <Badge>{org.organizationUserRole}</Badge>
+          <Badge>
+            {OrganizationRoleToReadableFormat(org.organizationUserRole)}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent>
@@ -29,19 +35,27 @@ export function UserOrganizationCard({ org }: { org: UserOrganization }) {
           Grupos ({org.groups.length})
         </h3>
         {org.groups.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-2 max-h-[180px] overflow-y-scroll pr-2">
             {org.groups.map((group) => (
-              <div key={group.groupId} className="border rounded-lg p-4">
+              <Link
+                to={`/groups/${group.groupId}`}
+                key={group.groupId}
+                className="block group border rounded-lg p-3 px-4"
+              >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h4 className="font-medium">{group.groupName}</h4>
-                    <p className="text-sm text-gray-500">
+                    <h4 className="text-sm group-hover:underline">
+                      {group.groupName}
+                    </h4>
+                    <p className="text-xs text-gray-500">
                       {group.groupDescription}
                     </p>
                   </div>
-                  <Badge variant="outline">{group.memberRole}</Badge>
+                  <Badge variant="outline">
+                    {GroupRoleToReadableFormat(group.memberRole)}
+                  </Badge>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

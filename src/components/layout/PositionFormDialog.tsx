@@ -28,15 +28,14 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Edit, Plus } from "lucide-react";
 import { Label } from "../ui/label";
+import type { GroupCompleteViewDto } from "../../api/types/group";
+import type { CreatePositionDto, PositionDto } from "../../models/position";
+import { useCreatePosition, useUpdatePosition } from "../../hooks/usePositions";
+import { toast } from "sonner";
 
 interface PositionFormDialogProps {
-  group: GroupWithDetails;
-  existingPosition?: Position; // Optional - if provided, component is in edit mode
-  onCreatePosition?: (data: CreatePositionForm) => Promise<Position | null>;
-  onUpdatePosition?: (
-    id: string,
-    data: Partial<CreatePositionForm>
-  ) => Promise<Position | null>;
+  group: GroupCompleteViewDto;
+  existingPosition?: PositionDto; // Optional - if provided, component is in edit mode
   trigger?: React.ReactNode;
 }
 
@@ -48,17 +47,20 @@ const positionFormSchema = z.object({
 
 export function PositionFormDialog({
   group,
-  onCreatePosition,
-  onUpdatePosition,
   trigger,
   existingPosition,
 }: PositionFormDialogProps) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync: createPosition, isPending: isCreating } =
+    useCreatePosition();
+  const { mutateAsync: updatePosition, isPending: isUpdating } =
+    useUpdatePosition();
+
+  const isSubmitting = isCreating || isUpdating;
 
   const isEditMode = Boolean(existingPosition);
 
-  const form = useForm<CreatePositionForm>({
+  const form = useForm<CreatePositionDto>({
     resolver: zodResolver(positionFormSchema),
     defaultValues: {
       name: existingPosition?.name || "",
@@ -72,18 +74,21 @@ export function PositionFormDialog({
   const onSubmit = async (data: CreatePositionForm) => {
     // Add groupId to the data before submitting
     try {
-      setIsSubmitting(true);
+      let result: PositionDto | null = null;
 
-      let result: Position | null = null;
-
-      if (isEditMode && existingPosition && onUpdatePosition) {
-        result = await onUpdatePosition(existingPosition.id, data);
-      } else if (!isEditMode && onCreatePosition) {
-        result = await onCreatePosition(data);
+      if (isEditMode && existingPosition) {
+        result = await updatePosition({
+          id: existingPosition.id,
+          payload: data,
+        });
+      } else if (isEditMode == false) {
+        result = await createPosition(data);
       }
 
       if (result) {
-        form.reset();
+        toast.success(
+          `${isEditMode ? "Atualizado" : "Criado"} posição com sucesso.`
+        );
         setOpen(false);
       }
     } catch (error) {
@@ -92,8 +97,6 @@ export function PositionFormDialog({
         error
       );
       // Error handling is done in the parent component/hook
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

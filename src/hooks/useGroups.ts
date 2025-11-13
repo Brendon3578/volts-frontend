@@ -1,182 +1,186 @@
-/**
- * Groups Hook
- * Provides group-related data operations
- */
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
+import * as groupApi from "../api/endpoints/groupEndpoint";
+import type {
+  GroupDto,
+  CreateGroupDto,
+  UpdateGroupDto,
+  GroupCompleteViewDto,
+} from "../api/types/group";
+import { useAuth } from "../context/Auth/useAuth";
 
-import { useState, useEffect } from "react";
-import { useDataAdapter } from "../api/providers/DataProvider";
-import type { Group, GroupWithDetails, CreateGroupForm } from "../models";
-import { toast } from "sonner";
+// Cache keys
+const GROUPS_KEY = "groups";
+const GROUP_KEY = "group";
 
 export const useGroups = () => {
-  const adapter = useDataAdapter();
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { state } = useAuth();
+  const user = state.user;
 
-  const fetchGroups = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await adapter.getGroups();
-      setGroups(data);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao carregar grupos";
-      setError(message);
-      toast.error("Erro ao carregar grupos");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
 
-  const createGroup = async (data: CreateGroupForm): Promise<Group | null> => {
-    try {
-      const newGroup = await adapter.createGroup(data);
-      setGroups((prev) => [...prev, newGroup]);
-      toast.message("Sucesso", {
-        description: "Grupo criado com sucesso!",
-      });
-      return newGroup;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao criar grupo";
-      toast.error(message);
-      return null;
-    }
-  };
+  return useQuery({
+    queryKey,
+    queryFn: groupApi.getGroups,
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+};
 
-  const updateGroup = async (
-    id: string,
-    data: Partial<CreateGroupForm>
-  ): Promise<Group | null> => {
-    try {
-      const updatedGroup = await adapter.updateGroup(id, data);
-      setGroups((prev) =>
-        prev.map((group) => (group.id === id ? updatedGroup : group))
-      );
-      toast.success("Sucesso", {
-        description: "Grupo atualizado com sucesso!",
-      });
-      return updatedGroup;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao atualizar grupo";
-      toast.error(message);
-      return null;
-    }
-  };
+export const useGroupsCompleteViewByOrganizationId = (
+  organizationId?: string
+) => {
+  const { state } = useAuth();
+  const user = state.user;
 
-  const deleteGroup = async (id: string): Promise<boolean> => {
-    try {
-      await adapter.deleteGroup(id);
-      setGroups((prev) => prev.filter((group) => group.id !== id));
+  const queryKey = user
+    ? [organizationId, `${GROUPS_KEY}-${user.id}`]
+    : [organizationId, GROUPS_KEY];
 
-      toast.message("Sucesso", {
-        description: "Grupo excluído com sucesso!",
-      });
+  return useQuery({
+    queryKey,
+    queryFn: () =>
+      groupApi.getGroupsCompleteViewByOrganizationId(organizationId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+};
 
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao excluir grupo";
+export const useGroupCompleteView = (id: string) => {
+  const { state } = useAuth();
+  const user = state.user;
 
-      toast.error(message);
+  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
 
-      return false;
-    }
-  };
-
-  const joinGroup = async (groupId: string): Promise<boolean> => {
-    try {
-      await adapter.joinGroup(groupId);
-
-      toast.message("Sucesso", {
-        description: "Você entrou no grupo com sucesso!",
-      });
-      // Refresh groups to update member count
-      fetchGroups();
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao entrar no grupo";
-
-      toast.error(message);
-
-      return false;
-    }
-  };
-
-  const leaveGroup = async (groupId: string): Promise<boolean> => {
-    try {
-      await adapter.leaveGroup(groupId);
-
-      toast.message("Sucesso", {
-        description: "Você saiu do grupo com sucesso!",
-      });
-      // Refresh groups to update member count
-      fetchGroups();
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao sair do grupo";
-
-      toast.error(message);
-
-      return false;
-    }
-  };
-
-  useEffect(() => {
-    fetchGroups();
-  }, []);
-
-  return {
-    groups,
-    loading,
-    error,
-    createGroup,
-    updateGroup,
-    deleteGroup,
-    joinGroup,
-    leaveGroup,
-    refetch: fetchGroups,
-  };
+  return useQuery({
+    queryKey,
+    queryFn: () => groupApi.getGroupCompleteViewById(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
 };
 
 export const useGroup = (id: string) => {
-  const adapter = useDataAdapter();
-  const [group, setGroup] = useState<GroupWithDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { state } = useAuth();
+  const user = state.user;
 
-  const fetchGroup = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await adapter.getGroupById(id);
-      setGroup(data);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao carregar grupo";
-      setError(message);
+  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
 
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  return useQuery({
+    queryKey,
+    queryFn: () => groupApi.getGroupById(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+};
 
-  useEffect(() => {
-    if (id) {
-      fetchGroup();
-    }
-  }, [id]);
+export const useGetGroupMembersByGroupId = (groupId?: string) => {
+  const queryKey = [`${GROUP_KEY}-${groupId}`, "members"];
 
-  return {
-    group,
-    loading,
-    error,
-    refetch: fetchGroup,
-  };
+  return useQuery({
+    queryKey,
+    queryFn: () => groupApi.getGroupMembers(groupId),
+    enabled: !!groupId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+};
+
+export const useCreateGroup = () => {
+  const queryClient = useQueryClient();
+  const { state } = useAuth();
+  const user = state.user;
+
+  const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+
+  return useMutation({
+    mutationFn: (payload: CreateGroupDto) => groupApi.createGroup(payload),
+    onSuccess: () => {
+      // Invalidate groups list to refetch
+      queryClient.invalidateQueries({ queryKey: groupsKey });
+    },
+  });
+};
+
+export const useUpdateGroup = () => {
+  const queryClient = useQueryClient();
+  const { state } = useAuth();
+  const user = state.user;
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateGroupDto }) =>
+      groupApi.updateGroup(id, payload),
+    onSuccess: (_, variables) => {
+      // Invalidate specific group and groups list
+      const groupKey = user
+        ? [`${GROUP_KEY}-${user.id}-${variables.id}`]
+        : [`${GROUP_KEY}-${variables.id}`];
+      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+
+      queryClient.invalidateQueries({ queryKey: groupKey });
+      queryClient.invalidateQueries({ queryKey: groupsKey });
+    },
+  });
+};
+
+export const useDeleteGroup = () => {
+  const queryClient = useQueryClient();
+  const { state } = useAuth();
+  const user = state.user;
+  const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+
+  return useMutation({
+    mutationFn: (id: string) => groupApi.deleteGroup(id),
+    onSuccess: () => {
+      // Invalidate groups list to refetch
+      queryClient.invalidateQueries({ queryKey: groupsKey });
+    },
+  });
+};
+
+export const useJoinGroup = () => {
+  const queryClient = useQueryClient();
+  const { state } = useAuth();
+  const user = state.user;
+
+  return useMutation({
+    mutationFn: (id: string) => groupApi.joinGroup(id),
+    onSuccess: (_, id) => {
+      // Invalidate specific group and groups list
+      const groupKey = user
+        ? [`${GROUP_KEY}-${user.id}-${id}`]
+        : [`${GROUP_KEY}-${id}`];
+      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+
+      queryClient.invalidateQueries({ queryKey: groupKey });
+      queryClient.invalidateQueries({ queryKey: groupsKey });
+    },
+  });
+};
+
+export const useLeaveGroup = () => {
+  const queryClient = useQueryClient();
+  const { state } = useAuth();
+  const user = state.user;
+
+  return useMutation({
+    mutationFn: (id: string) => groupApi.leaveGroup(id),
+    onSuccess: (_, id) => {
+      // Invalidate specific group and groups list
+      const groupKey = user
+        ? [`${GROUP_KEY}-${user.id}-${id}`]
+        : [`${GROUP_KEY}-${id}`];
+      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+
+      queryClient.invalidateQueries({ queryKey: groupKey });
+      queryClient.invalidateQueries({ queryKey: groupsKey });
+    },
+  });
 };

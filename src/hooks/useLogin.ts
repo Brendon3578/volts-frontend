@@ -1,7 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { login as loginApi, saveAuthData } from "../api/endpoints/auth";
-import { useAuth } from "../context/AuthContext";
+import {
+  login as loginApi,
+  saveAuthData,
+} from "../api/endpoints/authEndpoints";
 import type { LoginRequest } from "../models/auth";
+import { useAuth } from "../context/Auth/useAuth";
 
 export function useLogin() {
   const { login } = useAuth();

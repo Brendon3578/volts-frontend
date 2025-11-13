@@ -1,6 +1,9 @@
 import type { Group, Organization } from "../../models";
 import type {
+  ChangeOrganizationMemberRoleDto,
   CreateOrganizationDto,
+  OrganizationCompleteViewDto,
+  OrganizationMemberDto,
   UpdateOrganizationDto,
   UserOrganization,
 } from "../../models/organization";
@@ -29,7 +32,7 @@ export const getAvailableOrganizations = async (): Promise<Organization[]> => {
  * GET /api/Organizations/{id}
  */
 export const getOrganizationById = async (
-  id: string
+  id?: string
 ): Promise<Organization> => {
   const { data } = await api.get(`/Organizations/${id}`);
   return data;
@@ -108,4 +111,48 @@ export const joinOrganization = async (id: string): Promise<void> => {
  */
 export const leaveOrganization = async (id: string): Promise<void> => {
   await api.post(`/Organizations/${id}/leave`);
+};
+
+/**
+ * GET /api/Organizations/completeView
+ */
+export const getOrganizationsCompleteView = async (): Promise<
+  OrganizationCompleteViewDto[]
+> => {
+  const { data } = await api.get("/Organizations/completeView");
+  return data;
+};
+
+/**
+ * GET /api/Organizations/{id}/completeView
+ */
+export const getOrganizationCompleteViewById = async (
+  id?: string
+): Promise<OrganizationCompleteViewDto> => {
+  const { data } = await api.get(`/Organizations/${id}/completeView`);
+  return data;
+};
+
+/**
+ * GET /api/Organizations/{organizationId}/members
+ */
+export const getOrganizationMembers = async (
+  organizationId: string
+): Promise<OrganizationMemberDto[]> => {
+  const { data } = await api.get(`/Organizations/${organizationId}/members`);
+  return data;
+};
+
+/**
+ * PUT /api/Organizations/{organizationId}/members/{memberId}/role
+ */
+export const changeOrganizationMemberRole = async (
+  organizationId: string,
+  memberId: string,
+  payload: ChangeOrganizationMemberRoleDto
+): Promise<void> => {
+  await api.put(
+    `/Organizations/${organizationId}/members/${memberId}/role`,
+    payload
+  );
 };

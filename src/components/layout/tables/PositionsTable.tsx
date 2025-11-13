@@ -8,32 +8,19 @@ import {
 } from "../../ui/table";
 import { Button } from "../../ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import type {
-  CreatePositionForm,
-  GroupWithDetails,
-  Position,
-} from "../../../models";
+import type { CreatePositionForm } from "../../../models";
 import { PositionFormDialog } from "../PositionFormDialog";
 import { memo } from "react";
 import { ConfirmActionDialog } from "./../../common/ConfirmActionDialog";
+import type { GroupCompleteViewDto } from "../../../api/types/group";
+import type { PositionDto } from "../../../models/position";
 
 interface PositionsTableProps {
-  positions: Position[];
-  group: GroupWithDetails;
-
-  onUpdatePosition: (
-    id: string,
-    data: Partial<CreatePositionForm>
-  ) => Promise<Position | null>;
-  onDeletePosition: (position: Position) => Promise<boolean>;
+  positions?: PositionDto[];
+  group: GroupCompleteViewDto;
 }
 
-export function PositionsTable({
-  positions,
-  onUpdatePosition,
-  onDeletePosition,
-  group,
-}: PositionsTableProps) {
+export function PositionsTable({ positions, group }: PositionsTableProps) {
   return (
     <div className="border rounded-md">
       <Table>
@@ -45,7 +32,7 @@ export function PositionsTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {positions.length === 0 ? (
+          {!positions || positions.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={3}
@@ -59,9 +46,9 @@ export function PositionsTable({
               <PositionRow
                 key={position.id}
                 position={position}
-                onDelete={onDeletePosition}
+                // onDelete={onDeletePosition}
                 group={group}
-                onUpdate={onUpdatePosition}
+                // onUpdate={onUpdatePosition}
               />
             ))
           )}
@@ -74,13 +61,9 @@ export function PositionsTable({
 const PositionRow = memo(function PositionRow({
   position,
   group,
-  onUpdate,
-  onDelete,
 }: {
-  position: Position;
-  group: GroupWithDetails;
-  onUpdate: PositionsTableProps["onUpdatePosition"];
-  onDelete: PositionsTableProps["onDeletePosition"];
+  position: PositionDto;
+  group: GroupCompleteViewDto;
 }) {
   return (
     <TableRow key={position.id}>
@@ -92,7 +75,6 @@ const PositionRow = memo(function PositionRow({
         <div className="flex justify-end gap-2">
           <PositionFormDialog
             group={group}
-            onUpdatePosition={onUpdate}
             existingPosition={position}
             trigger={
               <Button variant="outline" size="sm">
@@ -114,7 +96,8 @@ const PositionRow = memo(function PositionRow({
             confirmLabel="Deletar"
             variant="destructive"
             onConfirm={async () => {
-              await onDelete(position);
+              console.log("Terminar essa função");
+              // await onDelete(position);
             }}
           />
         </div>

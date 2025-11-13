@@ -8,12 +8,10 @@ import {
   Lock,
   Mail,
   MessageCircle,
-  ShoppingCart,
   Star,
   MapPin,
   Clock,
   Church,
-  ChefHat,
   Package,
   PawPrint,
   Recycle,
@@ -43,8 +41,6 @@ const iconOptions: IconOption[] = [
   { Icon: MapPin, label: "Localização", id: "mappin" },
   { Icon: MessageCircle, label: "Mensagem", id: "messagecircle" },
   { Icon: Church, label: "Igreja", id: "church" },
-  { Icon: ChefHat, label: "Cozinha", id: "chefhat" },
-  { Icon: ShoppingCart, label: "Carrinho", id: "shoppingcart" },
   { Icon: Star, label: "Estrela", id: "star" },
 ];
 

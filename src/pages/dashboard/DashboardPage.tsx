@@ -1,5 +1,4 @@
-import { useUserOrganizations } from "@/hooks/useUserOrganizations";
-import { useAvailableOrganizations } from "@/hooks/useAvailableOrganizations";
+import { GroupList } from "@/components/groups/GroupList";
 import {
   Card,
   CardContent,
@@ -10,6 +9,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {
+  useUserOrganizations,
+  useAvailableOrganizations,
+} from "../../hooks/useOrganizations";
 
 const UserOrgsSkeletonCard = () => {
   return (
@@ -110,6 +113,14 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
+      </div>
+
+      <Separator className="my-8" />
+
+      {/* Seção de Meus Grupos */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Meus Grupos</h2>
+        <GroupList />
       </div>
 
       <Separator className="my-8" />

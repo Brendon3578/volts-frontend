@@ -1,10 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { AuthState } from "../models/auth";
-import type { User } from "../models/models";
-import { clearAuthData, isAuthenticated } from "../api/endpoints/auth";
+import type { AuthState } from "../../models/auth";
+import type { User } from "../../models/models";
+import { AuthContext } from "./AuthContext";
+import {
+  clearAuthData,
+  isAuthenticated,
+} from "../../api/endpoints/authEndpoints";
 
-// Valor inicial do contexto
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -14,25 +17,9 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Criando o contexto
-export const AuthContext = createContext<{
-  state: AuthState;
-  login: (token: string, user: User, expiresAt: string) => void;
-  logout: () => void;
-}>({
-  state: initialState,
-  login: () => {},
-  logout: () => {},
-});
-
-// Hook para usar o contexto
-export const useAuth = () => useContext(AuthContext);
-
-// Provider do contexto
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(initialState);
 
-  // Efeito para carregar dados de autenticação do localStorage
   useEffect(() => {
     const loadAuthData = () => {
       try {
@@ -51,12 +38,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             error: null,
           });
         } else {
-          // Se não houver dados válidos, limpar localStorage
           clearAuthData();
-          setState({
-            ...initialState,
-            isLoading: false,
-          });
+          setState({ ...initialState, isLoading: false });
         }
       } catch (error) {
         console.error("Erro ao carregar dados de autenticação:", error);
@@ -72,7 +55,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuthData();
   }, []);
 
-  // Função para fazer login
   const login = (token: string, user: User, expiresAt: string) => {
     setState({
       user,
@@ -84,13 +66,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  // Função para fazer logout
   const logout = () => {
     clearAuthData();
-    setState({
-      ...initialState,
-      isLoading: false,
-    });
+    setState({ ...initialState, isLoading: false });
   };
 
   return (
@@ -98,4 +76,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

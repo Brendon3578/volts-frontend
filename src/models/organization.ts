@@ -1,3 +1,16 @@
+export interface OrganizationFullViewDto {
+  id: string;
+  name: string;
+  description?: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  createdById: string; // Quem criou (automaticamente OWNER)
+
+  membersCount: string;
+  currentUserOrganizationRole: string;
+}
+
 // Tipos para a resposta da API de organizações do usuário
 export interface UserGroup {
   groupId: string;
@@ -30,4 +43,33 @@ export interface UpdateOrganizationDto {
   email?: string;
   phone?: string;
   address?: string;
+}
+
+export interface OrganizationCompleteViewDto {
+  id: string;
+  name: string;
+  description?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  isCurrentUserJoined: boolean;
+  memberCount: number;
+  currentUserOrganizationRole: string;
+}
+
+export interface OrganizationMemberDto {
+  id: string;
+  userId: string;
+  organizationId: string;
+  role: string;
+  joinedAt: string;
+  userName: string;
+  userEmail: string;
+}
+
+export interface ChangeOrganizationMemberRoleDto {
+  role: string;
 }

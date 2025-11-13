@@ -1,9 +1,10 @@
 import { memo } from "react";
 import type { GroupWithDetails } from "../../models";
 import { GroupIconContainer } from "./GroupIconContainer";
+import type { GroupCompleteViewDto, GroupDto } from "../../api/types/group";
 
 interface GroupTitleProps {
-  group: GroupWithDetails;
+  group: GroupCompleteViewDto;
 }
 
 export const GroupTitle = memo(function GroupTitle({ group }: GroupTitleProps) {

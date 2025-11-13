@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import type { Shift, ShiftStatusType } from "../../models";
+import type { ShiftStatusType } from "../../models";
 import { ShiftStatus } from "../../models";
 import {
   Card,
@@ -19,9 +19,10 @@ import { Clock, Calendar, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { ShiftDto } from "../../models/shift";
 
 interface ShiftCardProps {
-  shift: Shift;
+  shift: ShiftDto;
   showActions?: boolean;
 }
 
@@ -69,8 +70,11 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
     return format(date, "HH:mm");
   };
 
-  const isUpcoming = shift.date >= new Date();
-  const isPast = shift.date < new Date();
+  const parsedShiftStartDate = new Date(shift.startDate);
+  const parsedShiftEndDate = new Date(shift.endDate);
+
+  const isUpcoming = parsedShiftStartDate >= new Date();
+  const isPast = parsedShiftStartDate < new Date();
 
   return (
     <Card
@@ -106,19 +110,24 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>{formatDate(shift.date)}</span>
+            <span>
+              {formatDate(parsedShiftStartDate)} -{" "}
+              {formatDate(parsedShiftEndDate)}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>
-              {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
+              {formatTime(parsedShiftStartDate)} -{" "}
+              {formatTime(parsedShiftEndDate)}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
             <span>
-              {shift.confirmedVolunteers || 0} /{" "}
-              {shift.totalVolunteersNeeded || 0} voluntários
+              {/* {shift.confirmedVolunteers || 0} /{" "} // TODO: fazer */}
+              isso aqui
+              {/* {shift.totalVolunteersNeeded || 0} voluntários */}
             </span>
           </div>
         </div>

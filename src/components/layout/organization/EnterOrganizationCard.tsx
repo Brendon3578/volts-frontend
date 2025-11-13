@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardContent,
 } from "../../ui/card";
-import { ArrowRight, Calendar, House, Users } from "lucide-react";
+import { ArrowRight, Calendar, House, LogIn, Users } from "lucide-react";
 import { Button } from "../../ui/button";
 import type { Organization } from "../../../models";
 
@@ -45,31 +45,23 @@ export function EnterOrganizationCard({ org }: EnterOrganizationCardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
+      <CardContent>
         <div className="flex items-center justify-between">
           <div className="flex items-center flex-col gap-2 text-sm text-muted-foreground 2xl:flex-row 2xl:gap-4">
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               {/* <span>{group.memberCount || 0} membros</span> */}
-              <span>+10 membros</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" />
-              {/* <span>{group.upcomingShiftsCount || 0} próximas</span> */}
-              <span>3 próximas</span>
+              <span>+5 membros</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Button
-              size="sm"
               // onClick={handleJoinLeave}
               className="shrink-0"
             >
-              Acessar
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleViewDetails}>
-              <ArrowRight className="h-4 w-4" />
+              Entrar
+              <LogIn className="h-4 w-4" />
             </Button>
           </div>
         </div>

@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
-import { useAuth } from "../../../context/AuthContext";
 import type { SidebarLink } from "../../../types/layout";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 type SidebarProps = {
   sidebarItems: SidebarLink[];

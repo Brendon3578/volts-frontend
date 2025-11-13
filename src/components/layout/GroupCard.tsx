@@ -17,9 +17,11 @@ import { Badge } from "../ui/badge";
 import { Users, Calendar, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GroupIconContainer } from "../../pages/Group/GroupIconContainer";
+import type { GroupCompleteViewDto, GroupDto } from "../../api/types/group";
+import { cn } from "../../lib/utils";
 
 interface GroupCardProps {
-  group: Group;
+  group: GroupCompleteViewDto;
   onJoin?: (groupId: string) => void;
   onLeave?: (groupId: string) => void;
   isJoined?: boolean;
@@ -30,7 +32,6 @@ export function GroupCard({
   group,
   onJoin,
   onLeave,
-  isJoined = false,
   showJoinButton = true,
 }: GroupCardProps) {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export function GroupCard({
 
   const handleJoinLeave = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isJoined) {
+    if (group.isCurrentUserJoined) {
       onLeave?.(group.id);
     } else {
       onJoin?.(group.id);
@@ -49,7 +50,7 @@ export function GroupCard({
   };
 
   return (
-    <Card className="card-elevated " onClick={handleViewDetails}>
+    <Card className="card-elevated justify-between" onClick={handleViewDetails}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -62,15 +63,18 @@ export function GroupCard({
                 <CardTitle className="text-lg font-semibold text-foreground">
                   {group.name}
                 </CardTitle>
-                {group.description && (
-                  <CardDescription className="mt-1 line-clamp-2">
-                    {group.description}
-                  </CardDescription>
-                )}
+                <CardDescription
+                  className={cn(
+                    "mt-1",
+                    group.description ? "line-clamp-2" : "italic text-gray-500"
+                  )}
+                >
+                  {group.description || "Sem descrição"}
+                </CardDescription>
               </div>
             </div>
           </div>
-          {isJoined && (
+          {group.isCurrentUserJoined && (
             <Badge variant="secondary" className="ml-2 shrink-0">
               Membro
             </Badge>
@@ -92,14 +96,14 @@ export function GroupCard({
           </div>
 
           <div className="flex items-center gap-2">
-            {showJoinButton && (
+            {group.isCurrentUserJoined && (
               <Button
-                variant={isJoined ? "outline" : "secondary"}
+                variant={group.isCurrentUserJoined ? "outline" : "secondary"}
                 size="sm"
                 onClick={handleJoinLeave}
                 className="shrink-0"
               >
-                {isJoined ? "Sair" : "Entrar"}
+                {group.isCurrentUserJoined ? "Entrar" : "Acessar"}
               </Button>
             )}
             <Button variant="ghost" size="sm" onClick={handleViewDetails}>

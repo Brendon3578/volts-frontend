@@ -4,9 +4,6 @@
  */
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useGroup } from "../../hooks/useGroups";
-import { useShifts } from "../../hooks/useShifts";
-import { usePositions } from "../../hooks/usePositions";
 import {
   Card,
   CardContent,
@@ -35,25 +32,33 @@ import {
   User,
 } from "lucide-react";
 import { format } from "date-fns";
-import { useAuthentication } from "../../hooks/useAuthentication";
 import { PositionFormDialog } from "../../components/layout/PositionFormDialog";
 import { PositionsTable } from "../../components/layout/tables/PositionsTable";
 import { GroupTitle } from "./GroupTitle";
+import { useAuth } from "../../context/Auth/useAuth";
+import {
+  useGetGroupMembersByGroupId,
+  useGroupCompleteView,
+} from "../../hooks/useGroups";
+import { useShiftsByGroupId } from "../../hooks/useShifts";
+import { usePositionsByGroupId } from "../../hooks/usePositions";
+import { GroupRoleToReadableFormat } from "../../utils";
 
 export function GroupDetails() {
-  const { id } = useParams<{ id: string }>();
+  const { id: groupId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { group, loading: groupLoading } = useGroup(id!);
-  const { shifts, loading: shiftsLoading, createShift } = useShifts(id);
-  const {
-    positions,
-    loading: positionsLoading,
-    createPosition,
-    updatePosition,
-    deletePosition,
-  } = usePositions(id);
+  const { data: group, isLoading: groupLoading } = useGroupCompleteView(
+    groupId!
+  );
+  const { data: shifts, isLoading: shiftsLoading } = useShiftsByGroupId(
+    groupId!
+  );
+  const { data: positions, isLoading: positionsLoading } =
+    usePositionsByGroupId(groupId!);
+  const { data: groupMembers } = useGetGroupMembersByGroupId(groupId!);
 
-  const { user } = useAuthentication();
+  const { state } = useAuth();
+  const { user } = state;
 
   if (groupLoading) {
     return (
@@ -108,7 +113,7 @@ export function GroupDetails() {
             <p className="text-muted-foreground mb-4">
               O grupo que você está procurando não existe ou foi removido.
             </p>
-            <Button onClick={() => navigate("/groups")}>
+            <Button onClick={() => navigate(-1)}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar aos Grupos
             </Button>
@@ -118,143 +123,137 @@ export function GroupDetails() {
     );
   }
 
-  const upcomingShifts = shifts.filter(
-    (shift) => new Date(shift.date) >= new Date()
+  const upcomingShifts = shifts?.filter(
+    (shift) => new Date(shift.startDate) >= new Date()
   );
-  const pastShifts = shifts.filter(
-    (shift) => new Date(shift.date) < new Date()
+  const pastShifts = shifts?.filter(
+    (shift) => new Date(shift.startDate) < new Date()
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <section className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/groups")}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar aos Grupos
-          </Button>
+    <div className="">
+      {/* Header */}
+      <section className="mb-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(`/organizations/${group.organizationId}`)}
+          className="mb-4"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar aos Grupos
+        </Button>
 
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-            <div className="flex-1">
-              <GroupTitle group={group} />
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">
-                  <Users className="mr-1 h-3 w-3" />
-                  {group.members.length} membros
-                </Badge>
-                <Badge variant="outline">
-                  <Calendar className="mr-1 h-3 w-3" />
-                  {upcomingShifts.length} próximas escalas
-                </Badge>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/groups/${group.id}/settings`)}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Configurações
-              </Button>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div className="flex-1">
+            <GroupTitle group={group} />
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary">
+                <Users className="mr-1 h-3 w-3" />
+                {group.memberCount} membros
+              </Badge>
+              <Badge variant="outline">
+                <Calendar className="mr-1 h-3 w-3" />
+                {upcomingShifts?.length || 0} próximas escalas
+              </Badge>
             </div>
           </div>
-        </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Content */}
-          <main className="lg:col-span-3">
-            <Tabs defaultValue="shifts" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="shifts">Escalas</TabsTrigger>
-                <TabsTrigger value="positions">Posições</TabsTrigger>
-                <TabsTrigger value="members">Membros</TabsTrigger>
-              </TabsList>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/groups/${group.id}/settings`)}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Configurações
+            </Button>
+          </div>
+        </div>
+      </section>
 
-              <TabsContent value="shifts" className="space-y-6">
-                <div className="flex items-start justify-between">
-                  <h2 className="text-xl font-semibold">Escalas do Grupo</h2>
-                  {!positionsLoading && positions.length > 0 && (
-                    <CreateShiftDialog
-                      groupId={group.id}
-                      positions={positions}
-                      onCreateShift={createShift}
-                    />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Main Content */}
+        <main className="lg:col-span-3">
+          <Tabs defaultValue="shifts" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="shifts">Escalas</TabsTrigger>
+              <TabsTrigger value="positions">Posições</TabsTrigger>
+              <TabsTrigger value="members">Membros</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="shifts" className="space-y-6">
+              <div className="flex items-start justify-between">
+                <h2 className="text-xl font-semibold">Escalas do Grupo</h2>
+                {!positionsLoading && positions && positions.length > 0 && (
+                  <CreateShiftDialog groupId={group.id} positions={positions} />
+                )}
+              </div>
+
+              {shiftsLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-32 w-full" />
+                  ))}
+                </div>
+              ) : (upcomingShifts && upcomingShifts.length > 0) ||
+                (pastShifts && pastShifts.length > 0) ? (
+                <div className="space-y-6">
+                  {upcomingShifts && upcomingShifts.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-medium mb-4 text-primary">
+                        Próximas Escalas
+                      </h3>
+                      <div className="space-y-4">
+                        {upcomingShifts.map((shift) => (
+                          <ShiftCard key={shift.id} shift={shift} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {pastShifts && pastShifts.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-medium mb-4 text-muted-foreground">
+                        Escalas Anteriores
+                      </h3>
+                      <div className="space-y-4">
+                        {pastShifts.slice(0, 5).map((shift) => (
+                          <ShiftCard key={shift.id} shift={shift} />
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
-
-                {shiftsLoading ? (
-                  <div className="space-y-4">
-                    {Array.from({ length: 3 }).map((_, i) => (
-                      <Skeleton key={i} className="h-32 w-full" />
-                    ))}
-                  </div>
-                ) : upcomingShifts.length > 0 || pastShifts.length > 0 ? (
-                  <div className="space-y-6">
-                    {upcomingShifts.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-medium mb-4 text-primary">
-                          Próximas Escalas
-                        </h3>
-                        <div className="space-y-4">
-                          {upcomingShifts.map((shift) => (
-                            <ShiftCard key={shift.id} shift={shift} />
-                          ))}
-                        </div>
-                      </div>
+              ) : (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">
+                      Nenhuma escala encontrada
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      {positions && positions.length === 0
+                        ? "Crie posições primeiro, depois adicione escalas"
+                        : "Crie a primeira escala para este grupo"}
+                    </p>
+                    {positions && positions.length > 0 && (
+                      <CreateShiftDialog
+                        groupId={group.id}
+                        positions={positions}
+                      />
                     )}
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
 
-                    {pastShifts.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-medium mb-4 text-muted-foreground">
-                          Escalas Anteriores
-                        </h3>
-                        <div className="space-y-4">
-                          {pastShifts.slice(0, 5).map((shift) => (
-                            <ShiftCard key={shift.id} shift={shift} />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Card className="text-center py-12">
-                    <CardContent>
-                      <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">
-                        Nenhuma escala encontrada
-                      </h3>
-                      <p className="text-muted-foreground mb-6">
-                        {positions.length === 0
-                          ? "Crie posições primeiro, depois adicione escalas"
-                          : "Crie a primeira escala para este grupo"}
-                      </p>
-                      {positions.length > 0 && (
-                        <CreateShiftDialog
-                          groupId={group.id}
-                          positions={positions}
-                          onCreateShift={createShift}
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
+            <TabsContent value="positions" className="space-y-6">
+              <div className="flex items-start justify-between">
+                <h2 className="text-xl font-semibold">Posições do Grupo</h2>
+                <PositionFormDialog // refazer
+                  group={group}
+                />
 
-              <TabsContent value="positions" className="space-y-6">
-                <div className="flex items-start justify-between">
-                  <h2 className="text-xl font-semibold">Posições do Grupo</h2>
-                  <PositionFormDialog
-                    group={group}
-                    onCreatePosition={createPosition}
-                  />
-
-                  {/* <Button
+                {/* <Button
                     onClick={() =>
                       createPosition({
                         name: "Nova Posição",
@@ -266,16 +265,11 @@ export function GroupDetails() {
                     <Plus className="mr-2 h-4 w-4" />
                     Nova Posição
                   </Button> */}
-                </div>
+              </div>
 
-                <PositionsTable
-                  positions={positions}
-                  group={group}
-                  onUpdatePosition={updatePosition}
-                  onDeletePosition={(p) => deletePosition(p.id)}
-                />
+              <PositionsTable positions={positions} group={group} />
 
-                {/* {positionsLoading ? (
+              {/* {positionsLoading ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Array.from({ length: 4 }).map((_, i) => (
                       <Card key={i}>
@@ -330,148 +324,141 @@ export function GroupDetails() {
                     </CardContent>
                   </Card>
                 )} */}
-              </TabsContent>
+            </TabsContent>
 
-              <TabsContent value="members" className="space-y-6">
-                <div className="flex items-start justify-between">
-                  <h2 className="text-xl font-semibold">Membros do Grupo</h2>
-                  <Badge variant="outline">
-                    {group.members.length} membros
-                  </Badge>
-                </div>
+            <TabsContent value="members" className="space-y-6">
+              <div className="flex items-start justify-between">
+                <h2 className="text-xl font-semibold">Membros do Grupo</h2>
+                <Badge variant="outline">{group.memberCount} membros</Badge>
+              </div>
 
-                {group.members.length > 0 ? (
-                  <div className="space-y-4">
-                    {group.members.map((member) => (
-                      <Card key={member.id} className="card-elevated">
-                        <CardContent className="flex items-center justify-between py-1">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border-secondary/20 border shadow-sm">
-                              <User className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <p className="font-medium">{member.user?.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {member.user?.email}
-                              </p>
-                            </div>
+              {groupMembers && groupMembers.length > 0 ? (
+                <div className="space-y-4">
+                  {groupMembers.map((member) => (
+                    <Card key={member.id} className="card-elevated">
+                      <CardContent className="flex items-center justify-between py-1">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border-secondary/20 border shadow-sm">
+                            <User className="h-5 w-5 text-primary" />
                           </div>
-                          <div className="flex items-center gap-2">
-                            {member.userId == user?.id && (
-                              <Badge
-                                variant={"secondary"}
-                                className="bg-emerald-500"
-                              >
-                                Você
-                              </Badge>
-                            )}
-                            <Badge variant="secondary">
-                              {member.role === "GROUP_LEADER"
-                                ? "Líder"
-                                : member.role === "COORDINATOR"
-                                ? "Coordenador"
-                                : "Voluntário"}
+                          <div>
+                            <p className="font-medium">{member.userName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {member.userEmail}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {member.userId == user?.id && (
+                            <Badge
+                              variant={"secondary"}
+                              className="bg-emerald-500"
+                            >
+                              Você
                             </Badge>
-                            <div className="text-xs text-muted-foreground">
-                              Entrou em{" "}
-                              {format(new Date(member.joinedAt), "dd/MM/yyyy")}
-                            </div>
+                          )}
+                          <Badge variant="secondary">
+                            {GroupRoleToReadableFormat(member.role)}
+                          </Badge>
+                          <div className="text-xs text-muted-foreground">
+                            Entrou em{" "}
+                            {format(new Date(member.joinedAt), "dd/MM/yyyy")}
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <Card className="text-center py-12">
-                    <CardContent>
-                      <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">
-                        Nenhum membro encontrado
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Este grupo ainda não possui membros além do criador.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-            </Tabs>
-          </main>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">
+                      Nenhum membro encontrado
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Este grupo ainda não possui membros além do criador.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        </main>
 
-          {/* Sidebar */}
-          <section className="space-y-6">
-            {/* Group Stats */}
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle className="text-base">Estatísticas</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Membros</span>
-                  </div>
-                  <span className="font-semibold">{group.members.length}</span>
+        {/* Sidebar */}
+        <section className="space-y-6">
+          {/* Group Stats */}
+          <Card className="card-elevated">
+            <CardHeader>
+              <CardTitle className="text-base">Estatísticas</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Membros</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Posições</span>
-                  </div>
-                  <span className="font-semibold">{positions.length}</span>
+                <span className="font-semibold">
+                  {groupMembers?.length || 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Posições</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Próximas</span>
-                  </div>
-                  <span className="font-semibold">{upcomingShifts.length}</span>
+                <span className="font-semibold">{positions?.length || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Próximas</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Anteriores</span>
-                  </div>
-                  <span className="font-semibold">{pastShifts.length}</span>
+                <span className="font-semibold">
+                  {upcomingShifts?.length || 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">Anteriores</span>
                 </div>
-              </CardContent>
-            </Card>
+                <span className="font-semibold">{pastShifts?.length || 0}</span>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Quick Actions */}
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle className="text-base">Ações Rápidas</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {positions.length > 0 && (
-                  <CreateShiftDialog
-                    groupId={group.id}
-                    positions={positions}
-                    onCreateShift={createShift}
-                    trigger={
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        <Calendar className="mr-2 h-4 w-4" />
-                        Nova Escala
-                      </Button>
-                    }
-                  />
-                )}
-
-                <PositionFormDialog
-                  group={group}
-                  onCreatePosition={createPosition}
+          {/* Quick Actions */}
+          <Card className="card-elevated">
+            <CardHeader>
+              <CardTitle className="text-base">Ações Rápidas</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {positions && positions.length > 0 && (
+                <CreateShiftDialog
+                  groupId={group.id}
+                  positions={positions}
                   trigger={
                     <Button variant="outline" className="w-full justify-start">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Nova Posição
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Nova Escala
                     </Button>
                   }
                 />
+              )}
 
-                {/* <Button
+              <PositionFormDialog
+                group={group}
+                trigger={
+                  <Button variant="outline" className="w-full justify-start">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Nova Posição
+                  </Button>
+                }
+              />
+
+              {/* <Button
                   variant="outline"
                   className="w-full justify-start"
                   onClick={() =>
@@ -485,14 +472,13 @@ export function GroupDetails() {
                   <Plus className="mr-2 h-4 w-4" />
                   Nova Posição
                 </Button> */}
-                <Button variant="outline" className="w-full justify-start">
-                  <Users className="mr-2 h-4 w-4" />
-                  Convidar Membros
-                </Button>
-              </CardContent>
-            </Card>
-          </section>
-        </div>
+              <Button variant="outline" className="w-full justify-start">
+                <Users className="mr-2 h-4 w-4" />
+                Convidar Membros
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
       </div>
     </div>
   );

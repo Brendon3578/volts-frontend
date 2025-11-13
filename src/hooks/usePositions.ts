@@ -1,107 +1,79 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createPosition,
+  deletePosition,
+  getPositionById,
+  getPositionsByGroupId,
+  updatePosition,
+} from "../api/endpoints";
+import type { CreatePositionDto, UpdatePositionDto } from "../models/position";
+
 /**
- * Positions Hook
- * Provides position-related data operations
+ * Lista todas as posições de um grupo
  */
+export const usePositionsByGroupId = (groupId?: string) =>
+  useQuery({
+    queryKey: ["positions", groupId],
+    queryFn: ({ queryKey }) => getPositionsByGroupId(queryKey[1] as string),
+    enabled: !!groupId,
+    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    retry: 1,
+  });
 
-import { useState, useEffect } from "react";
-import { useDataAdapter } from "../api/providers/DataProvider";
-import type { Position, CreatePositionForm } from "../models";
-import { toast } from "sonner";
+/**
+ * Busca uma posição específica
+ */
+export const usePositionById = (positionId?: string) =>
+  useQuery({
+    queryKey: ["position", positionId],
+    queryFn: ({ queryKey }) => getPositionById(queryKey[1] as string),
+    enabled: !!positionId,
+    staleTime: 1000 * 60 * 5,
+  });
 
-export const usePositions = (groupId?: string) => {
-  const adapter = useDataAdapter();
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Cria uma nova posição
+ */
+export const useCreatePosition = () => {
+  const queryClient = useQueryClient();
 
-  const fetchPositions = async () => {
-    if (!groupId) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await adapter.getPositionsByGroup(groupId);
-      setPositions(data);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao carregar posições";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createPosition = async (
-    data: CreatePositionForm
-  ): Promise<Position | null> => {
-    try {
-      const newPosition = await adapter.createPosition(data);
-      setPositions((prev) => [...prev, newPosition]);
-      toast.message("Sucesso", {
-        description: "Posição criada com sucesso!",
+  return useMutation({
+    mutationFn: (payload: CreatePositionDto) => createPosition(payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["positions", variables.groupId],
       });
+    },
+  });
+};
 
-      return newPosition;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao criar posição";
-      toast.error(message);
+/**
+ * Atualiza uma posição existente
+ */
+export const useUpdatePosition = () => {
+  const queryClient = useQueryClient();
 
-      return null;
-    }
-  };
-
-  const updatePosition = async (
-    id: string,
-    data: Partial<CreatePositionForm>
-  ): Promise<Position | null> => {
-    try {
-      const updatedPosition = await adapter.updatePosition(id, data);
-      setPositions((prev) =>
-        prev.map((position) =>
-          position.id === id ? updatedPosition : position
-        )
-      );
-      toast.message("Sucesso", {
-        description: "Posição atualizada com sucesso!",
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdatePositionDto }) =>
+      updatePosition(id, payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["positions", variables.payload.groupId],
       });
-      return updatedPosition;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao atualizar posição";
-      toast.error(message);
-      return null;
-    }
-  };
+    },
+  });
+};
 
-  const deletePosition = async (id: string): Promise<boolean> => {
-    try {
-      await adapter.deletePosition(id);
-      setPositions((prev) => prev.filter((position) => position.id !== id));
-      toast.message("Sucesso", {
-        description: "Posição excluída com sucesso!",
-      });
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Erro ao excluir posição";
-      toast.error(message);
-      return false;
-    }
-  };
+/**
+ * Deleta uma posição
+ */
+export const useDeletePosition = () => {
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchPositions();
-  }, [groupId]);
-
-  return {
-    positions,
-    loading,
-    error,
-    createPosition,
-    updatePosition,
-    deletePosition,
-    refetch: fetchPositions,
-  };
+  return useMutation({
+    mutationFn: (id: string) => deletePosition(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+    },
+  });
 };

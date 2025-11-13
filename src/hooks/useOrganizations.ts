@@ -1,0 +1,218 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  changeOrganizationMemberRole,
+  createOrganization,
+  deleteOrganization,
+  getAvailableOrganizations,
+  getOrganizationById,
+  getOrganizationCompleteViewById,
+  getOrganizationMembers,
+  getOrganizationsCompleteView,
+  getUserOrganizations,
+  joinOrganization,
+  leaveOrganization,
+  updateOrganization,
+} from "../api/endpoints";
+import type {
+  ChangeOrganizationMemberRoleDto,
+  CreateOrganizationDto,
+  UpdateOrganizationDto,
+} from "../models/organization";
+import type { Organization } from "../models";
+import { useAuth } from "../context/Auth/useAuth";
+
+// todo: centralizar depois as querykey
+const GROUPS_KEY = "groups";
+const GROUP_KEY = "group";
+
+/**
+ * Lista todas as organizações disponíveis
+ */
+export const useAvailableOrganizations = () => {
+  const { state } = useAuth();
+  const user = state.user;
+
+  const queryKey = user
+    ? [`availableOrganizations-${user?.id}`]
+    : ["availableOrganizations"];
+
+  return useQuery({
+    queryKey,
+    queryFn: getAvailableOrganizations,
+    staleTime: 1000 * 60 * 5, // 5 min de cache
+  });
+};
+/**
+ * Lista as organizações do usuário autenticado
+ */
+export const useUserOrganizations = (userId?: string) =>
+  useQuery({
+    queryKey: ["userOrganizations", userId],
+    queryFn: getUserOrganizations,
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
+  });
+
+export const useOrganizationById = (orgId?: string) =>
+  useQuery({
+    queryKey: ["organizations", orgId],
+    queryFn: ({ queryKey }) => getOrganizationById(queryKey[1] as string),
+    enabled: !!orgId, // só faz a requisição se o id existir
+    staleTime: 1000 * 60 * 5, // cache por 5 minutos
+    retry: 1, // tenta apenas uma vez em caso de erro
+  });
+
+// --------------- MUTATIONS ---------------
+
+/**
+ * Cria uma nova organização
+ */
+export const useCreateOrganization = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateOrganizationDto) => createOrganization(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["availableOrganizations"] });
+      queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+    },
+  });
+};
+
+/**
+ * Atualiza uma organização
+ */
+export const useUpdateOrganization = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateOrganizationDto;
+    }) => updateOrganization(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+    },
+  });
+};
+
+/**
+ * Deleta uma organização
+ */
+export const useDeleteOrganization = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteOrganization(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableOrganizations"] });
+    },
+  });
+};
+
+/**
+ * Entrar em uma organização
+ */
+export const useJoinOrganization = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => joinOrganization(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableOrganizations"] });
+    },
+  });
+};
+
+/**
+ * Sair de uma organização
+ */
+export const useLeaveOrganization = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => leaveOrganization(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableOrganizations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationsCompleteView"],
+      });
+    },
+  });
+};
+
+/**
+ * Lista todas as organizações com visualização completa
+ */
+export const useOrganizationsCompleteView = () =>
+  useQuery({
+    queryKey: ["organizationsCompleteView"],
+    queryFn: getOrganizationsCompleteView,
+    staleTime: 1000 * 60 * 5, // 5 min de cache
+  });
+
+/**
+ * Busca a visão completa de uma organização específica
+ */
+export const useOrganizationCompleteViewById = (id?: string) => {
+  const { state } = useAuth();
+  const user = state.user;
+
+  const queryKey = user
+    ? ["organizationCompleteView", id, `organizationCompleteView-${user?.id}`]
+    : ["organizationCompleteView", id];
+
+  return useQuery({
+    queryKey: [queryKey],
+    queryFn: () => getOrganizationCompleteViewById(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+};
+
+/**
+ * Lista os membros de uma organização
+ */
+export const useOrganizationMembers = (organizationId?: string) =>
+  useQuery({
+    queryKey: ["organizationMembers", organizationId],
+    queryFn: ({ queryKey }) => getOrganizationMembers(queryKey[1] as string),
+    enabled: !!organizationId,
+    staleTime: 1000 * 60 * 5,
+  });
+
+// --------------- MUTATIONS ---------------
+
+/**
+ * Altera o papel de um membro dentro de uma organização
+ */
+export const useChangeOrganizationMemberRole = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      organizationId,
+      memberId,
+      payload,
+    }: {
+      organizationId: string;
+      memberId: string;
+      payload: ChangeOrganizationMemberRoleDto;
+    }) => changeOrganizationMemberRole(organizationId, memberId, payload),
+    onSuccess: (_, { organizationId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organizationMembers", organizationId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationCompleteView", organizationId],
+      });
+    },
+  });
+};

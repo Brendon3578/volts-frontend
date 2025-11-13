@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { register, saveAuthData } from "../api/endpoints/auth";
-import { useAuth } from "../context/AuthContext";
+import { register, saveAuthData } from "../api/endpoints/authEndpoints";
 import type { RegisterRequest } from "../models/auth";
+import { useAuth } from "../context/Auth/useAuth";
 
 export function useRegister() {
   const { login } = useAuth();

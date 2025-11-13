@@ -12,7 +12,8 @@ import { NotFound } from "@/pages/NotFound";
 import { DataProvider } from "@/api/providers/DataProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { DashboardLayout } from "./DashboardLayout";
-import { OrganizationDashboard } from "../pages/Organization/OrganizationDashboard";
+import { OrganizationDashboardPage } from "../pages/Organization/OrganizationDashboardPage";
+import { OrganizationDetailsPage } from "../pages/Organization/OrganizationDetailsPage";
 
 export const router = createBrowserRouter([
   // Rotas públicas (sem layout)
@@ -43,12 +44,20 @@ export const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "/dashboard",
-            element: <OrganizationDashboard />,
+            path: "/dashboard", // TODO: refazer página de dashboard
+            element: <OrganizationDashboardPage />,
+          },
+          // {
+          //   path: "/groups",
+          //   element: <Groups />,
+          // },
+          {
+            path: "/organizations", // TODO: refazer isso aqui
+            element: <OrganizationDashboardPage />,
           },
           {
-            path: "/groups",
-            element: <Groups />,
+            path: "/organizations/:id",
+            element: <OrganizationDetailsPage />,
           },
           {
             path: "/groups/:id",

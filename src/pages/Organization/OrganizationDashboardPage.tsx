@@ -3,7 +3,7 @@
  * Lists all groups with search and filter functionality
  */
 
-import { useGroups } from "../../hooks/useGroups";
+import { useGroups } from "../../hooks/useGroupsOld";
 import {
   Card,
   CardContent,
@@ -26,14 +26,22 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAvailableOrganizations } from "../../hooks/useAvailableOrganizations";
 import { EnterOrganizationCard } from "../../components/layout/organization/EnterOrganizationCard";
 import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
-import { useUserOrganizations } from "../../hooks/useUserOrganizations";
 import { Separator } from "../../components/ui/separator";
 import { Badge } from "../../components/ui/badge";
 import { CreateOrganizationDialog } from "../../components/layout/organization/CreateOrganizationDialog";
 import { UserOrganizationCard } from "../../components/layout/organization/UserOrganizationCard";
+import { GroupList } from "../../components/groups/GroupList";
+import {
+  useUserOrganizations,
+  useAvailableOrganizations,
+} from "../../hooks/useOrganizations";
+import { useAuth } from "../../context/Auth/useAuth";
+import {
+  BreadcrumbCustom,
+  type BreadcrumbItemType,
+} from "../../components/layout/common/BreadcrumbCustom";
 
 const UserOrgsSkeletonCard = () => {
   return (
@@ -49,15 +57,18 @@ const UserOrgsSkeletonCard = () => {
   );
 };
 
-export function OrganizationDashboard() {
+export function OrganizationDashboardPage() {
   const {
     data: availableOrgs,
     isLoading,
     isError,
   } = useAvailableOrganizations();
   const [searchTerm, setSearchTerm] = useState("");
-  const userOrgs = useUserOrganizations();
   const navigate = useNavigate();
+
+  const { state } = useAuth();
+  const user = state.user;
+  const userOrgs = useUserOrganizations(user?.id);
 
   const filteredOrgs = availableOrgs?.filter(
     (org) =>
@@ -93,18 +104,24 @@ export function OrganizationDashboard() {
     );
   }
 
+  // const breadcrumbItem: BreadcrumbItemType = {
+  //   label: "Dashboard",
+  //   href: "/dashboard",
+  // };
+
   return (
-    <div className="container mx-auto p-4">
+    <div>
+      {/* <BreadcrumbCustom items={[breadcrumbItem]} /> */}
       {/* Header */}
-      <section className="mb-8">
+      <section className="mb-8 mt-8">
         {/* <Button
-            variant="ghost"
-            onClick={() => navigate("/discover")}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar à Página Inicial
-          </Button> */}
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-4"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar à Página Inicial
+        </Button> */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -184,7 +201,7 @@ export function OrganizationDashboard() {
         {isError ? (
           <FetchErrorAlert />
         ) : filteredOrgs && filteredOrgs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
             {filteredOrgs.map((org) => (
               <EnterOrganizationCard
                 key={org.id}
@@ -243,6 +260,14 @@ export function OrganizationDashboard() {
             </CardContent>
           </Card>
         )}
+
+        {/* <Separator className="my-8" /> */}
+
+        {/* Seção de Meus Grupos */}
+        {/* <div>
+          <h2 className="text-2xl font-semibold mb-4">Meus Grupos</h2>
+          <GroupList />
+        </div> */}
       </section>
     </div>
   );

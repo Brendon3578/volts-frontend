@@ -28,7 +28,7 @@ import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
 import type { CreateOrganizationDto } from "../../../models/organization";
 import { createOrganizationSchema } from "../../../lib/schemas";
-import { useCreateOrganization } from "../../../hooks/queries/useOrganizations";
+import { useCreateOrganization } from "../../../hooks/useOrganizations";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 

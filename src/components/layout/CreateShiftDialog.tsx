@@ -29,12 +29,14 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Plus, Minus } from "lucide-react";
 import type { CreateShiftForm, Position, Shift } from "../../models";
+import type { PositionDto } from "../../models/position";
+import { useCreateShift } from "../../hooks/useShifts";
+import type { CreateShiftDto } from "../../models/shift";
 
 const createShiftSchema = z.object({
   title: z.string().max(100, "Título muito longo").optional(),
-  date: z.string().min(1, "Data é obrigatória"),
-  startTime: z.string().min(1, "Horário de início é obrigatório"),
-  endTime: z.string().min(1, "Horário de fim é obrigatório"),
+  startDate: z.string().min(1, "Horário de início é obrigatório"),
+  endDate: z.string().min(1, "Horário de fim é obrigatório"),
   notes: z.string().max(500, "Observações muito longas").optional(),
   groupId: z.string(),
   positions: z
@@ -49,37 +51,34 @@ const createShiftSchema = z.object({
 
 interface CreateShiftDialogProps {
   groupId: string;
-  positions: Position[];
-  onCreateShift: (data: CreateShiftForm) => Promise<Shift | null>;
+  positions: PositionDto[];
   trigger?: ReactNode;
 }
 
 export function CreateShiftDialog({
   groupId,
   positions,
-  onCreateShift,
   trigger,
 }: CreateShiftDialogProps) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync: createShift, isPending } = useCreateShift();
 
-  const form = useForm<CreateShiftForm>({
+  const form = useForm<CreateShiftDto>({
     resolver: zodResolver(createShiftSchema),
     defaultValues: {
       title: "",
-      date: "",
-      startTime: "",
-      endTime: "",
+      startDate: "",
+      endDate: "",
       notes: "",
       groupId,
       positions: [{ positionId: "", requiredCount: 1 }],
     },
   });
 
-  const onSubmit = async (data: CreateShiftForm) => {
+  const onSubmit = async (data: CreateShiftDto) => {
     try {
-      setIsSubmitting(true);
-      const result = await onCreateShift(data);
+      const result = await createShift(data);
+      // const result = await onCreateShift(data);
       if (result) {
         form.reset();
         setOpen(false);
@@ -87,8 +86,6 @@ export function CreateShiftDialog({
     } catch (error) {
       console.error("Error creating shift:", error);
       // Error handling is done in the parent component/hook
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -144,31 +141,17 @@ export function CreateShiftDialog({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="startTime"
+                name="startDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Horário de Início</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="datetime-local" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -177,12 +160,12 @@ export function CreateShiftDialog({
 
               <FormField
                 control={form.control}
-                name="endTime"
+                name="endDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Horário de Fim</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="datetime-local" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -292,12 +275,12 @@ export function CreateShiftDialog({
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
-                disabled={isSubmitting}
+                disabled={isPending}
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Criando..." : "Criar Escala"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Criando..." : "Criar Escala"}
               </Button>
             </div>
           </form>

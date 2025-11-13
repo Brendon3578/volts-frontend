@@ -3,7 +3,7 @@
  * Lists all groups with search and filter functionality
  */
 
-import { useGroups } from "../../hooks/useGroups";
+import { useGroups } from "../../hooks/useGroupsOld";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";

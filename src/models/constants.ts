@@ -1,7 +1,7 @@
 // Enums matching Prisma schema
 export const OrganizationRole = {
-  OWNER: "OWNER",
   ADMIN: "ADMIN",
+  LEADER: "LEADER",
   MEMBER: "MEMBER",
 } as const;
 
