@@ -80,3 +80,13 @@ export function isUserOrganizationAdmin(role?: string) {
   if (!role) return false;
   return OrganizationRole.ADMIN == role;
 }
+
+export function isUserOrganizationLeader(role?: string) {
+  if (!role) return false;
+  return OrganizationRole.LEADER == role;
+}
+
+export function isUserOrganizationVolunteer(role?: string) {
+  if (!role) return false;
+  return OrganizationRole.MEMBER == role;
+}

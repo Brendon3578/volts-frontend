@@ -12,11 +12,15 @@ import {
   joinOrganization,
   leaveOrganization,
   updateOrganization,
+  inviteOrganizationMember,
+  removeOrganizationMember,
+  deleteOrganizationMember,
 } from "../api/endpoints";
 import type {
   ChangeOrganizationMemberRoleDto,
   CreateOrganizationDto,
   UpdateOrganizationDto,
+  InviteOrganizationMemberDto,
 } from "../models/organization";
 import type { Organization } from "../models";
 import { useAuth } from "../context/Auth/useAuth";
@@ -75,6 +79,69 @@ export const useCreateOrganization = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["availableOrganizations"] });
       queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+    },
+  });
+};
+
+export const useInviteOrganizationMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      organizationId,
+      payload,
+    }: {
+      organizationId: string;
+      payload: InviteOrganizationMemberDto;
+    }) => inviteOrganizationMember(organizationId, payload),
+    onSuccess: (_, { organizationId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organizationMembers", organizationId],
+      });
+    },
+  });
+};
+
+export const useRemoveOrganizationMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      organizationId,
+      memberId,
+    }: {
+      organizationId: string;
+      memberId: string;
+    }) => removeOrganizationMember(organizationId, memberId),
+    onSuccess: (_, { organizationId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organizationMembers", organizationId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationCompleteView", organizationId],
+      });
+    },
+  });
+};
+
+export const useDeleteOrganizationMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      organizationId,
+      memberId,
+    }: {
+      organizationId: string;
+      memberId: string;
+    }) => deleteOrganizationMember(organizationId, memberId),
+    onSuccess: (_, { organizationId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organizationMembers", organizationId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationCompleteView", organizationId],
+      });
     },
   });
 };

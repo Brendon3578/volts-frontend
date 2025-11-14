@@ -14,6 +14,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { DashboardLayout } from "./DashboardLayout";
 import { OrganizationDashboardPage } from "../pages/Organization/OrganizationDashboardPage";
 import { OrganizationDetailsPage } from "../pages/Organization/OrganizationDetailsPage";
+import { OrganizationSettingsPage } from "../pages/Organization/OrganizationSettingsPage";
 
 export const router = createBrowserRouter([
   // Rotas públicas (sem layout)
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
           {
             path: "/organizations/:id",
             element: <OrganizationDetailsPage />,
+          },
+          {
+            path: "/organizations/:id/settings",
+            element: <OrganizationSettingsPage />,
           },
           {
             path: "/groups/:id",

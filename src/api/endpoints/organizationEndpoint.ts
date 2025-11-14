@@ -6,6 +6,7 @@ import type {
   OrganizationMemberDto,
   UpdateOrganizationDto,
   UserOrganization,
+  InviteOrganizationMemberDto,
 } from "../../models/organization";
 import api from "../client";
 
@@ -155,4 +156,29 @@ export const changeOrganizationMemberRole = async (
     `/Organizations/${organizationId}/members/${memberId}/role`,
     payload
   );
+};
+
+export const inviteOrganizationMember = async (
+  organizationId: string,
+  payload: InviteOrganizationMemberDto
+): Promise<OrganizationMemberDto> => {
+  const { data } = await api.post(
+    `/Organizations/${organizationId}/invite-member`,
+    payload
+  );
+  return data;
+};
+
+export const removeOrganizationMember = async (
+  organizationId: string,
+  memberId: string
+): Promise<void> => {
+  await api.delete(`/Organizations/${organizationId}/members/${memberId}`);
+};
+
+export const deleteOrganizationMember = async (
+  organizationId: string,
+  memberId: string
+): Promise<void> => {
+  await api.delete(`/Organizations/${organizationId}/members/${memberId}`);
 };

@@ -21,11 +21,11 @@ export const GroupColorSelector = memo(
         type="button"
         title={label}
         className={cn(
-          `cursor-pointer w-6 h-6 rounded-full border-foreground/15 border hover:scale-125 transition-all`,
+          `cursor-pointer w-6 h-6 rounded-full border-foreground/15  border hover:scale-110 `,
           className,
-          isSelected && "scale-125"
+          isSelected && "outline-2 scale-90 outline-offset-2 hover:scale-100"
         )}
-        style={{ backgroundColor: color }}
+        style={{ backgroundColor: color, outlineColor: color }}
         {...props}
       />
     );

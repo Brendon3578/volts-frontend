@@ -153,7 +153,7 @@ export function OrganizationDetailsPage() {
   }
 
   return (
-    <div>
+    <div className="w-full">
       {/* Organization Header */}
 
       <Button
@@ -189,6 +189,9 @@ export function OrganizationDetailsPage() {
                 <Button
                   variant={"outline"}
                   title="Configurações da organização"
+                  onClick={() =>
+                    navigate(`/organizations/${organization.id}/settings`)
+                  }
                 >
                   <Settings2 className="h-4 w-4" />
                   Configurações

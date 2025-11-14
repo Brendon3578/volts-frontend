@@ -38,7 +38,7 @@ export interface CreateOrganizationDto {
 }
 
 export interface UpdateOrganizationDto {
-  name?: string;
+  name: string;
   description?: string;
   email?: string;
   phone?: string;
@@ -72,4 +72,8 @@ export interface OrganizationMemberDto {
 
 export interface ChangeOrganizationMemberRoleDto {
   role: string;
+}
+export interface InviteOrganizationMemberDto {
+  invitedEmail: string;
+  inviterRole: string;
 }
