@@ -25,11 +25,7 @@ import { Input } from "../../components/ui/input";
 import { useState } from "react";
 import { CreateGroupDialog } from "../../components/layout/CreateGroupDialog";
 import { Separator } from "../../components/ui/separator";
-import { GroupList } from "@/components/groups/GroupList";
-import {
-  useGroupsCompleteViewByOrganizationId,
-  useLeaveGroup,
-} from "../../hooks/useGroups";
+import { useGroupsCompleteViewByOrganizationId } from "../../hooks/useGroups";
 import { GroupCard } from "../../components/layout/GroupCard";
 import {
   isUserOrganizationAdmin,

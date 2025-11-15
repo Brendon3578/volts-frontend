@@ -8,10 +8,9 @@ import {
   CardDescription,
   CardContent,
 } from "../../ui/card";
-import {
-  GroupRoleToReadableFormat,
-  OrganizationRoleToReadableFormat,
-} from "../../../utils";
+import { OrganizationRoleToReadableFormat } from "../../../utils";
+import { cn } from "../../../lib/utils";
+import { GroupIconContainer } from "../../../pages/Group/GroupIconContainer";
 
 export function UserOrganizationCard({ org }: { org: UserOrganization }) {
   return (
@@ -40,9 +39,23 @@ export function UserOrganizationCard({ org }: { org: UserOrganization }) {
               <Link
                 to={`/groups/${group.groupId}`}
                 key={group.groupId}
-                className="block group border rounded-lg p-3 px-4"
+                className={cn(
+                  "block group border rounded-lg p-3 px-4 border-l-4 hover:border-l-8",
+                  group.groupColor && `border-l-[${group.groupColor}]`
+                )}
+                style={
+                  group.groupColor ? { borderLeftColor: group.groupColor } : {}
+                }
               >
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex gap-3 items-center">
+                  <div>
+                    <GroupIconContainer
+                      containerClassName=" flex items-center justify-center p-1.5 rounded-sm border border-foreground/15"
+                      iconClassName="h-4 w-4"
+                      groupIconId={group.groupIcon}
+                      color={group.groupColor}
+                    />
+                  </div>
                   <div>
                     <h4 className="text-sm group-hover:underline">
                       {group.groupName}
@@ -51,9 +64,6 @@ export function UserOrganizationCard({ org }: { org: UserOrganization }) {
                       {group.groupDescription}
                     </p>
                   </div>
-                  <Badge variant="outline">
-                    {GroupRoleToReadableFormat(group.memberRole)}
-                  </Badge>
                 </div>
               </Link>
             ))}

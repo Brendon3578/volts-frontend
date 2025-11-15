@@ -51,13 +51,17 @@ import { ConfirmActionDialog } from "../../components/common/ConfirmActionDialog
 import { OrganizationRole } from "../../models/constants";
 import type { OrganizationRoleType } from "../../models";
 import { OrganizationMemberRow } from "../../components/layout/organization/OrganizationMemberRow";
-import { isUserOrganizationLeader } from "./../../utils/constantsHelper";
+import {
+  isUserOrganizationAdmin,
+  isUserOrganizationLeader,
+} from "./../../utils/constantsHelper";
 import { useAuth } from "../../context/Auth/useAuth";
 import axios, { isAxiosError } from "axios";
 import { Textarea } from "../../components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createOrganizationSchema } from "../../lib/schemas";
 import { ArrowLeft } from "lucide-react";
+import { WithPermission } from "./../../components/common/WithPermission";
 
 export function OrganizationSettingsPage() {
   const { id } = useParams<{ id: string }>();
@@ -90,6 +94,10 @@ export function OrganizationSettingsPage() {
       address: "",
     },
   });
+
+  const isUserAdmin = isUserOrganizationAdmin(
+    organization?.currentUserOrganizationRole
+  );
 
   useEffect(() => {
     if (organization) {
@@ -290,16 +298,30 @@ export function OrganizationSettingsPage() {
                     )}
                   />
                 </div>
-                <div className="flex justify-end gap-2">
-                  <ConfirmActionDialog
-                    title="Apagar organização"
-                    description="Esta ação é irreversível"
-                    onConfirm={handleDeleteOrganization}
-                    variant="destructive"
-                    confirmLabel={isDeleting ? "Apagando..." : "Apagar"}
-                  >
-                    <Button variant="destructive">Apagar</Button>
-                  </ConfirmActionDialog>
+                <div className="flex justify-between gap-2">
+                  <WithPermission can={isUserAdmin}>
+                    <ConfirmActionDialog
+                      title="Apagar organização"
+                      description="Esta ação é irreversível"
+                      onConfirm={handleDeleteOrganization}
+                      variant="destructive"
+                      confirmLabel={isDeleting ? "Apagando..." : "Apagar"}
+                      trigger={
+                        <Button variant="destructive">
+                          Apagar Organização
+                        </Button>
+                      }
+                    >
+                      <p className="mb-2 text-neutral-800">
+                        Tudo isso será apagado também:
+                      </p>
+                      <ul className="list-disc ml-5 text-neutral-800">
+                        <li>Grupos e suas atividades</li>
+                        <li>Histórico de todas as escalas feitas</li>
+                        <li>Atividades e interações entre membros</li>
+                      </ul>
+                    </ConfirmActionDialog>
+                  </WithPermission>
                   <Button type="submit" disabled={isUpdating}>
                     {isUpdating ? "Salvando..." : "Salvar alterações"}
                   </Button>

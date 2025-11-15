@@ -60,7 +60,7 @@ export const ConfirmActionDialog = memo(function ConfirmActionDialog({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
-        {children && <div className="mt-4">{children}</div>}
+        {children && <div>{children}</div>}
 
         <div className="flex justify-end gap-2 pt-4">
           <Button

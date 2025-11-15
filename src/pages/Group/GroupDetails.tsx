@@ -29,20 +29,15 @@ import {
   Plus,
   MapPin,
   Clock,
-  User,
+  CalendarClock,
 } from "lucide-react";
-import { format } from "date-fns";
 import { PositionFormDialog } from "../../components/layout/PositionFormDialog";
 import { PositionsTable } from "../../components/layout/tables/PositionsTable";
 import { GroupTitle } from "./GroupTitle";
 import { useAuth } from "../../context/Auth/useAuth";
-import {
-  useGetGroupMembersByGroupId,
-  useGroupCompleteView,
-} from "../../hooks/useGroups";
+import { useGroupCompleteView } from "../../hooks/useGroups";
 import { useShiftsByGroupId } from "../../hooks/useShifts";
 import { usePositionsByGroupId } from "../../hooks/usePositions";
-import { GroupRoleToReadableFormat } from "../../utils";
 
 export function GroupDetails() {
   const { id: groupId } = useParams<{ id: string }>();
@@ -55,7 +50,6 @@ export function GroupDetails() {
   );
   const { data: positions, isLoading: positionsLoading } =
     usePositionsByGroupId(groupId!);
-  const { data: groupMembers } = useGetGroupMembersByGroupId(groupId!);
 
   const { state } = useAuth();
   const { user } = state;
@@ -106,7 +100,7 @@ export function GroupDetails() {
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-full bg-background flex items-center justify-center">
         <Card className="max-w-md">
           <CardContent className="text-center py-8">
             <h2 className="text-xl font-semibold mb-2">Grupo não encontrado</h2>
@@ -131,7 +125,7 @@ export function GroupDetails() {
   );
 
   return (
-    <div className="">
+    <div className="w-full">
       {/* Header */}
       <section className="mb-8">
         <Button
@@ -148,12 +142,12 @@ export function GroupDetails() {
             <GroupTitle group={group} />
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary">
-                <Users className="mr-1 h-3 w-3" />
-                {group.memberCount} membros
+                <CalendarClock className="mr-1 h-3 w-3" />
+                {group.upcomingShiftsCount || 0} próximas escalas
               </Badge>
               <Badge variant="outline">
                 <Calendar className="mr-1 h-3 w-3" />
-                {upcomingShifts?.length || 0} próximas escalas
+                {group.totalShiftsCount || 0} escalas
               </Badge>
             </div>
           </div>
@@ -174,10 +168,9 @@ export function GroupDetails() {
         {/* Main Content */}
         <main className="lg:col-span-3">
           <Tabs defaultValue="shifts" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2 mb-2 *:cursor-pointer">
               <TabsTrigger value="shifts">Escalas</TabsTrigger>
               <TabsTrigger value="positions">Posições</TabsTrigger>
-              <TabsTrigger value="members">Membros</TabsTrigger>
             </TabsList>
 
             <TabsContent value="shifts" className="space-y-6">
@@ -231,9 +224,17 @@ export function GroupDetails() {
                       Nenhuma escala encontrada
                     </h3>
                     <p className="text-muted-foreground mb-6">
-                      {positions && positions.length === 0
-                        ? "Crie posições primeiro, depois adicione escalas"
-                        : "Crie a primeira escala para este grupo"}
+                      {positions && positions.length === 0 ? (
+                        <>
+                          Crie{" "}
+                          <span className="font-bold text-primary">
+                            primeiro as posições
+                          </span>
+                          , depois adicione escalas
+                        </>
+                      ) : (
+                        "Crie a primeira escala para este grupo"
+                      )}
                     </p>
                     {positions && positions.length > 0 && (
                       <CreateShiftDialog
@@ -325,64 +326,6 @@ export function GroupDetails() {
                   </Card>
                 )} */}
             </TabsContent>
-
-            <TabsContent value="members" className="space-y-6">
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-semibold">Membros do Grupo</h2>
-                <Badge variant="outline">{group.memberCount} membros</Badge>
-              </div>
-
-              {groupMembers && groupMembers.length > 0 ? (
-                <div className="space-y-4">
-                  {groupMembers.map((member) => (
-                    <Card key={member.id} className="card-elevated">
-                      <CardContent className="flex items-center justify-between py-1">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border-secondary/20 border shadow-sm">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{member.userName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {member.userEmail}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {member.userId == user?.id && (
-                            <Badge
-                              variant={"secondary"}
-                              className="bg-emerald-500"
-                            >
-                              Você
-                            </Badge>
-                          )}
-                          <Badge variant="secondary">
-                            {GroupRoleToReadableFormat(member.role)}
-                          </Badge>
-                          <div className="text-xs text-muted-foreground">
-                            Entrou em{" "}
-                            {format(new Date(member.joinedAt), "dd/MM/yyyy")}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      Nenhum membro encontrado
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Este grupo ainda não possui membros além do criador.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
           </Tabs>
         </main>
 
@@ -394,15 +337,6 @@ export function GroupDetails() {
               <CardTitle className="text-base">Estatísticas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Membros</span>
-                </div>
-                <span className="font-semibold">
-                  {groupMembers?.length || 0}
-                </span>
-              </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -472,10 +406,6 @@ export function GroupDetails() {
                   <Plus className="mr-2 h-4 w-4" />
                   Nova Posição
                 </Button> */}
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="mr-2 h-4 w-4" />
-                Convidar Membros
-              </Button>
             </CardContent>
           </Card>
         </section>

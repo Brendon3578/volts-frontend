@@ -16,9 +16,8 @@ export interface UserGroup {
   groupId: string;
   groupName: string;
   groupDescription: string;
-  memberId: string;
-  memberName: string;
-  memberRole: string;
+  groupIcon?: string;
+  groupColor?: string;
 }
 
 export interface UserOrganization {

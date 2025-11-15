@@ -1,4 +1,4 @@
-import type { Group, Organization } from "../../models";
+import type { Organization } from "../../models";
 import type {
   ChangeOrganizationMemberRoleDto,
   CreateOrganizationDto,
@@ -9,6 +9,7 @@ import type {
   InviteOrganizationMemberDto,
 } from "../../models/organization";
 import api from "../client";
+import type { GroupDto } from "../types/group";
 
 /**
  * GET /api/User/organizations
@@ -44,7 +45,7 @@ export const getOrganizationById = async (
  */
 export const getGroupsByOrganizationId = async (
   id: string
-): Promise<Group[]> => {
+): Promise<GroupDto[]> => {
   const { data } = await api.get(`/Organizations/${id}/groups`);
   return data;
 };

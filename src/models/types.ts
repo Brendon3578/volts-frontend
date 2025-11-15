@@ -9,41 +9,15 @@ import type {
   ShiftStatus,
   VolunteerStatus,
 } from "./constants";
-import type {
-  Group,
-  Position,
-  GroupUser,
-  Shift,
-  ShiftPosition,
-  ShiftVolunteer,
-  User,
-} from "./models";
+import type { Position, ShiftPosition, ShiftVolunteer, User } from "./models";
 
 export type OrganizationRoleType =
   (typeof OrganizationRole)[keyof typeof OrganizationRole];
-
-export type GroupRoleType = (typeof GroupRole)[keyof typeof GroupRole];
 
 export type ShiftStatusType = (typeof ShiftStatus)[keyof typeof ShiftStatus];
 
 export type VolunteerStatusType =
   (typeof VolunteerStatus)[keyof typeof VolunteerStatus];
-
-// UI-specific types
-export interface GroupWithDetails extends Group {
-  positions: Position[];
-  members: GroupUser[];
-  upcomingShifts: Shift[];
-}
-
-export interface ShiftWithDetails extends Shift {
-  positions: (ShiftPosition & {
-    position: Position;
-    volunteers: (ShiftVolunteer & { user: User })[];
-  })[];
-}
-
-// Form types for validation
 
 // API response types
 export interface ApiResponse<T> {

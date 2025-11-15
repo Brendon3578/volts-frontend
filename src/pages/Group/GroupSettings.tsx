@@ -142,7 +142,7 @@ export function GroupSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="w-full">
       {/* Header */}
 
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
@@ -150,16 +150,10 @@ export function GroupSettings() {
         Voltar à página de Grupos
       </Button>
 
-      <section className="mb-8">
+      <section className="mb-2">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1">
             <GroupTitle group={group} />
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">
-                <Users className="mr-1 h-3 w-3" />
-                {group.memberCount || 0} membros
-              </Badge>
-            </div>
           </div>
         </div>
       </section>

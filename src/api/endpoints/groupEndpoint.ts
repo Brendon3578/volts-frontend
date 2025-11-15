@@ -4,7 +4,6 @@ import type {
   CreateGroupDto,
   UpdateGroupDto,
   GroupCompleteViewDto,
-  GroupMemberDto,
 } from "../types/group";
 
 export const getGroups = async (): Promise<GroupDto[]> => {
@@ -54,21 +53,4 @@ export const updateGroup = async (
 
 export const deleteGroup = async (id: string): Promise<void> => {
   await api.delete(`/Groups/${id}`);
-};
-
-export const joinGroup = async (id: string): Promise<void> => {
-  await api.post(`/Groups/${id}/join`);
-};
-
-export const leaveGroup = async (id: string): Promise<void> => {
-  await api.post(`/Groups/${id}/leave`);
-};
-
-// member
-
-export const getGroupMembers = async (
-  groupId?: string
-): Promise<GroupMemberDto[]> => {
-  const response = await api.get(`/Groups/${groupId}/members`);
-  return response.data;
 };

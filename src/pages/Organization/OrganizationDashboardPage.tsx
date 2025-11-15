@@ -38,10 +38,6 @@ import {
   useAvailableOrganizations,
 } from "../../hooks/useOrganizations";
 import { useAuth } from "../../context/Auth/useAuth";
-import {
-  BreadcrumbCustom,
-  type BreadcrumbItemType,
-} from "../../components/layout/common/BreadcrumbCustom";
 
 const UserOrgsSkeletonCard = () => {
   return (

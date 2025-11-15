@@ -20,21 +20,6 @@ export interface CreateGroupDto {
   icon?: string;
 }
 
-export interface GroupMemberDto {
-  id: string;
-  userId: string;
-  groupId: string;
-  role: string;
-  joinedAt: string;
-  userName: string;
-  userEmail: string;
-}
-
-export interface InviteUserGroupDto {
-  invitedId: string;
-  inviterRole: GroupRoleType;
-}
-
 export interface UpdateGroupDto {
   name?: string;
   description?: string;
@@ -52,12 +37,10 @@ export interface GroupCompleteViewDto {
   createdAt: Date;
   updatedAt: Date;
   // Computed fields for UI
-  memberCount?: number;
   upcomingShiftsCount?: number;
+  totalShiftsCount?: number;
 
   color?: string;
   imageUrl?: string;
   icon?: string;
-
-  isCurrentUserJoined: boolean;
 }

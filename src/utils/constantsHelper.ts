@@ -1,6 +1,5 @@
 import {
   type OrganizationRoleType,
-  type GroupRoleType,
   type ShiftStatusType,
   type VolunteerStatusType,
   OrganizationRole,
@@ -18,21 +17,6 @@ export function OrganizationRoleToReadableFormat(
       return "Membro";
     default:
       return "Membro";
-  }
-}
-
-export function GroupRoleToReadableFormat(
-  role: GroupRoleType | string
-): string {
-  switch (role) {
-    case "GROUP_LEADER":
-      return "Líder";
-    case "COORDINATOR":
-      return "Coordenador";
-    case "VOLUNTEER":
-      return "Voluntário";
-    default:
-      return "Voluntário";
   }
 }
 

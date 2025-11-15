@@ -81,18 +81,6 @@ export const useGroup = (id: string) => {
   });
 };
 
-export const useGetGroupMembersByGroupId = (groupId?: string) => {
-  const queryKey = [`${GROUP_KEY}-${groupId}`, "members"];
-
-  return useQuery({
-    queryKey,
-    queryFn: () => groupApi.getGroupMembers(groupId),
-    enabled: !!groupId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: true,
-  });
-};
-
 export const useCreateGroup = () => {
   const queryClient = useQueryClient();
   const { state } = useAuth();
@@ -102,9 +90,14 @@ export const useCreateGroup = () => {
 
   return useMutation({
     mutationFn: (payload: CreateGroupDto) => groupApi.createGroup(payload),
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Invalidate groups list to refetch
+      const organizationId = data.organizationId;
+      const organizationFullViewQueryKey = user
+        ? [organizationId, `${GROUPS_KEY}-${user.id}`]
+        : [organizationId, GROUPS_KEY];
       queryClient.invalidateQueries({ queryKey: groupsKey });
+      queryClient.invalidateQueries({ queryKey: organizationFullViewQueryKey });
     },
   });
 };
@@ -140,46 +133,6 @@ export const useDeleteGroup = () => {
     mutationFn: (id: string) => groupApi.deleteGroup(id),
     onSuccess: () => {
       // Invalidate groups list to refetch
-      queryClient.invalidateQueries({ queryKey: groupsKey });
-    },
-  });
-};
-
-export const useJoinGroup = () => {
-  const queryClient = useQueryClient();
-  const { state } = useAuth();
-  const user = state.user;
-
-  return useMutation({
-    mutationFn: (id: string) => groupApi.joinGroup(id),
-    onSuccess: (_, id) => {
-      // Invalidate specific group and groups list
-      const groupKey = user
-        ? [`${GROUP_KEY}-${user.id}-${id}`]
-        : [`${GROUP_KEY}-${id}`];
-      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
-
-      queryClient.invalidateQueries({ queryKey: groupKey });
-      queryClient.invalidateQueries({ queryKey: groupsKey });
-    },
-  });
-};
-
-export const useLeaveGroup = () => {
-  const queryClient = useQueryClient();
-  const { state } = useAuth();
-  const user = state.user;
-
-  return useMutation({
-    mutationFn: (id: string) => groupApi.leaveGroup(id),
-    onSuccess: (_, id) => {
-      // Invalidate specific group and groups list
-      const groupKey = user
-        ? [`${GROUP_KEY}-${user.id}-${id}`]
-        : [`${GROUP_KEY}-${id}`];
-      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
-
-      queryClient.invalidateQueries({ queryKey: groupKey });
       queryClient.invalidateQueries({ queryKey: groupsKey });
     },
   });

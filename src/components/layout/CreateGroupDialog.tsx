@@ -37,6 +37,7 @@ import { GroupColorSelector } from "../groups/GroupColorSelector";
 import { GroupIconSelector } from "../groups/GroupIconSelector";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface CreateGroupDialogProps {
   trigger?: ReactNode;
@@ -49,6 +50,7 @@ export function CreateGroupDialog({
 }: CreateGroupDialogProps) {
   const [open, setOpen] = useState(false);
   const { mutateAsync: createGroup, isPending } = useCreateGroup();
+  const navigate = useNavigate();
 
   const form = useForm<CreateGroupDto>({
     resolver: zodResolver(createGroupSchema),
@@ -66,6 +68,8 @@ export function CreateGroupDialog({
       if (result) {
         form.reset();
         setOpen(false);
+        toast.success("Grupo criado com sucesso");
+        navigate(`/groups/${result.id}`);
       }
     } catch (error) {
       if (isAxiosError(error)) {

@@ -1,6 +1,8 @@
 import { memo, useMemo } from "react";
 import { getBrightness, getGroupIcon } from "../../utils";
 import { House } from "lucide-react";
+import { cn } from "../../lib/utils";
+import type { ClassValue } from "clsx";
 
 interface GroupIconContainerProps {
   color: string | undefined;
@@ -45,12 +47,12 @@ export const GroupIconContainer = memo(function GroupIconContainer({
     [brightness]
   );
 
-  const finalIconClassName = `${iconClassName} ${textColorClass}`;
+  const finalIconClassName = cn(iconClassName, textColorClass);
 
-  console.log("oi");
+  console.log("groupiconcontainer");
 
   return (
-    <div className={containerClassName} style={backgroundStyle}>
+    <div className={cn(containerClassName)} style={backgroundStyle}>
       {children ? (
         children
       ) : (
