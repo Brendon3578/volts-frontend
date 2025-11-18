@@ -11,7 +11,7 @@ export const getGroups = async (): Promise<GroupDto[]> => {
   return response.data;
 };
 
-export const getGroupById = async (id: string): Promise<GroupDto> => {
+export const getGroupById = async (id?: string): Promise<GroupDto> => {
   const response = await api.get(`/Groups/${id}`);
   return response.data;
 };

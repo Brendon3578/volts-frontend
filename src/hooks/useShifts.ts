@@ -5,8 +5,10 @@ import {
   getShiftById,
   getShiftsByGroupId,
   updateShift,
+  getShiftCompleteView,
 } from "../api/endpoints";
 import type { CreateShiftDto, UpdateShiftDto } from "../models/shift";
+import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 /**
  * Lista todos os turnos de um grupo
@@ -16,7 +18,7 @@ export const useShiftsByGroupId = (groupId?: string) =>
     queryKey: ["shifts", groupId],
     queryFn: ({ queryKey }) => getShiftsByGroupId(queryKey[1] as string),
     enabled: !!groupId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
     retry: 1,
   });
 
@@ -28,7 +30,16 @@ export const useShiftById = (shiftId?: string) =>
     queryKey: ["shift", shiftId],
     queryFn: ({ queryKey }) => getShiftById(queryKey[1] as string),
     enabled: !!shiftId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
+  });
+
+export const useShiftCompleteView = (shiftId?: string) =>
+  useQuery({
+    queryKey: ["shift-complete-view", shiftId],
+    queryFn: ({ queryKey }) => getShiftCompleteView(queryKey[1] as string),
+    enabled: !!shiftId,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
+    retry: 1,
   });
 
 /**

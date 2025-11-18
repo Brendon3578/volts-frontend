@@ -2,14 +2,10 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Home } from "@/pages/Home";
 import { Login } from "@/pages/Authentication/Login";
 import { SignUp } from "@/pages/Authentication/SignUp";
-import { Dashboard } from "@/pages/Dashboard";
-import DashboardPage from "@/pages/dashboard/DashboardPage";
-import { Groups } from "@/pages/Group/Groups";
 import { GroupDetails } from "@/pages/Group/GroupDetails";
 import { GroupSettings } from "@/pages/Group/GroupSettings";
 import { ShiftDetail } from "@/pages/ShiftDetail";
 import { NotFound } from "@/pages/NotFound";
-import { DataProvider } from "@/api/providers/DataProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { DashboardLayout } from "./DashboardLayout";
 import { OrganizationDashboardPage } from "../pages/Organization/OrganizationDashboardPage";
@@ -38,11 +34,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <DataProvider>
-            <DashboardLayout />
-          </DataProvider>
-        ),
+        element: <DashboardLayout />,
         children: [
           {
             path: "/dashboard", // TODO: refazer página de dashboard
@@ -82,10 +74,10 @@ export const router = createBrowserRouter([
   },
 
   // Rota discover (mantém o Dashboard antigo)
-  {
-    path: "/discover",
-    element: <Dashboard />,
-  },
+  // {
+  //   path: "/discover",
+  //   element: <Dashboard />,
+  // },
 
   // Rota 404
   {

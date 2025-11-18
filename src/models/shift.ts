@@ -8,6 +8,7 @@ export interface ShiftPositionDto {
   requiredCount: number;
   volunteersCount: number;
   positionName: string;
+  positionDescription: string;
 }
 
 export interface CreateShiftPositionDto {
@@ -31,7 +32,7 @@ export interface ShiftDto {
 export interface CreateShiftDto {
   startDate: string;
   endDate: string;
-  title?: string;
+  title: string;
   notes?: string;
   groupId: string;
   positions: CreateShiftPositionDto[];

@@ -70,6 +70,16 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
     return format(date, "HH:mm");
   };
 
+  const confirmedVolunteers = shift.positions?.reduce(
+    (sum, p) => sum + (p.volunteersCount || 0),
+    0
+  );
+
+  const totalVolunteersNeeded = shift.positions?.reduce(
+    (sum, p) => sum + (p.requiredCount || 0),
+    0
+  );
+
   const parsedShiftStartDate = new Date(shift.startDate);
   const parsedShiftEndDate = new Date(shift.endDate);
 
@@ -125,9 +135,8 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
             <span>
-              {/* {shift.confirmedVolunteers || 0} /{" "} // TODO: fazer */}
-              isso aqui
-              {/* {shift.totalVolunteersNeeded || 0} voluntários */}
+              {confirmedVolunteers || 0} / {totalVolunteersNeeded || 0}{" "}
+              voluntários
             </span>
           </div>
         </div>

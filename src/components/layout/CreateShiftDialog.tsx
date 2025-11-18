@@ -3,7 +3,7 @@
  * Modal dialog for creating new shifts/escalas
  */
 
-import { useState, type ReactNode } from "react";
+import { memo, useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -28,13 +28,13 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Plus, Minus } from "lucide-react";
-import type { CreateShiftForm, Position, Shift } from "../../models";
 import type { PositionDto } from "../../models/position";
 import { useCreateShift } from "../../hooks/useShifts";
 import type { CreateShiftDto } from "../../models/shift";
+import { addHours, toHtmlDatetimeLocal } from "../../utils";
 
 const createShiftSchema = z.object({
-  title: z.string().max(100, "Título muito longo").optional(),
+  title: z.string().max(100, "Título muito longo"),
   startDate: z.string().min(1, "Horário de início é obrigatório"),
   endDate: z.string().min(1, "Horário de fim é obrigatório"),
   notes: z.string().max(500, "Observações muito longas").optional(),
@@ -55,7 +55,7 @@ interface CreateShiftDialogProps {
   trigger?: ReactNode;
 }
 
-export function CreateShiftDialog({
+export const CreateShiftDialog = memo(function CreateShiftDialog({
   groupId,
   positions,
   trigger,
@@ -67,8 +67,8 @@ export function CreateShiftDialog({
     resolver: zodResolver(createShiftSchema),
     defaultValues: {
       title: "",
-      startDate: "",
-      endDate: "",
+      startDate: toHtmlDatetimeLocal(addHours(1)),
+      endDate: toHtmlDatetimeLocal(addHours(2)),
       notes: "",
       groupId,
       positions: [{ positionId: "", requiredCount: 1 }],
@@ -127,21 +127,19 @@ export function CreateShiftDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título (opcional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Culto Domingo Manhã" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Título</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: Culto Domingo Manhã" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -288,4 +286,4 @@ export function CreateShiftDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});

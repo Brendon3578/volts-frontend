@@ -14,13 +14,18 @@ import { memo } from "react";
 import { ConfirmActionDialog } from "./../../common/ConfirmActionDialog";
 import type { GroupCompleteViewDto } from "../../../api/types/group";
 import type { PositionDto } from "../../../models/position";
+import { useDeletePosition } from "../../../hooks/usePositions";
+import { toast } from "sonner";
 
 interface PositionsTableProps {
   positions?: PositionDto[];
   group: GroupCompleteViewDto;
 }
 
-export function PositionsTable({ positions, group }: PositionsTableProps) {
+export const PositionsTable = memo(function PositionsTable({
+  positions,
+  group,
+}: PositionsTableProps) {
   return (
     <div className="border rounded-md">
       <Table>
@@ -56,7 +61,7 @@ export function PositionsTable({ positions, group }: PositionsTableProps) {
       </Table>
     </div>
   );
-}
+});
 
 const PositionRow = memo(function PositionRow({
   position,
@@ -65,6 +70,17 @@ const PositionRow = memo(function PositionRow({
   position: PositionDto;
   group: GroupCompleteViewDto;
 }) {
+  const { mutateAsync: deletePosition } = useDeletePosition();
+
+  async function deletePositionAction() {
+    try {
+      await deletePosition(position.id);
+      toast.success("Posição removida com sucesso");
+    } catch {
+      toast.error("Erro ao remover posição");
+    }
+  }
+
   return (
     <TableRow key={position.id}>
       <TableCell className="font-medium">{position.name}</TableCell>
@@ -95,10 +111,7 @@ const PositionRow = memo(function PositionRow({
             description={`Tem certeza que deseja deletar a posição "${position.name}"? Esta ação não pode ser desfeita.`}
             confirmLabel="Deletar"
             variant="destructive"
-            onConfirm={async () => {
-              console.log("Terminar essa função");
-              // await onDelete(position);
-            }}
+            onConfirm={deletePositionAction}
           />
         </div>
       </TableCell>

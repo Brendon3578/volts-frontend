@@ -7,6 +7,7 @@ import {
   updatePosition,
 } from "../api/endpoints";
 import type { CreatePositionDto, UpdatePositionDto } from "../models/position";
+import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 /**
  * Lista todas as posições de um grupo
@@ -16,7 +17,7 @@ export const usePositionsByGroupId = (groupId?: string) =>
     queryKey: ["positions", groupId],
     queryFn: ({ queryKey }) => getPositionsByGroupId(queryKey[1] as string),
     enabled: !!groupId,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutos de cache
     retry: 1,
   });
 
@@ -28,7 +29,7 @@ export const usePositionById = (positionId?: string) =>
     queryKey: ["position", positionId],
     queryFn: ({ queryKey }) => getPositionById(queryKey[1] as string),
     enabled: !!positionId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
   });
 
 /**

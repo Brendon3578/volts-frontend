@@ -4,7 +4,6 @@
  */
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useShift } from "../hooks/useShiftsOLDDDD";
 import {
   Card,
   CardContent,
@@ -32,19 +31,50 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { VolunteerStatusType } from "../models";
 import { ShiftStatus, VolunteerStatus } from "../models";
+import { useShiftById, useShiftCompleteView } from "../hooks/useShifts";
+import { useGroup } from "../hooks/useGroups";
+import {
+  useCancelAssignment,
+  useConfirmAssignment,
+} from "../hooks/useShiftPositionAssignment";
+import type { ShiftVolunteerDto } from "../models/shiftCompleteView";
+import { formatShiftDuration } from "../utils";
+import { toast } from "sonner";
 
 export function ShiftDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const {
-    shift,
-    loading,
-    signupForShift,
-    cancelSignup,
-    updateVolunteerStatus,
-  } = useShift(id!);
+    data: shift,
+    isLoading,
+    // signupForShift,
+    // cancelSignup,
+    // updateVolunteerStatus,
+  } = useShiftCompleteView(id!);
 
-  if (loading) {
+  const { data: group, isLoading: isGroupLoading } = useGroup(shift?.groupId);
+  const { mutateAsync: confirmAssignment } = useConfirmAssignment();
+  const { mutateAsync: cancelAssignment } = useCancelAssignment();
+
+  async function confirmShiftAssignment(shiftPosition: ShiftVolunteerDto) {
+    try {
+      confirmAssignment({ id: shiftPosition.id });
+      toast.success("Check-in feito, inscrição confirmada!");
+    } catch (error) {
+      toast.error("Erro ao fazer Check-in, confirmar inscrição");
+    }
+  }
+
+  function cancelShiftAssignment(shiftPosition: ShiftVolunteerDto) {
+    try {
+      cancelAssignment({ id: shiftPosition.id });
+      toast.success("Inscrição cancelada!");
+    } catch (error) {
+      toast.error("Erro ao  cancelar inscrição");
+    }
+  }
+
+  if (isLoading || isGroupLoading || !group) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -131,6 +161,10 @@ export function ShiftDetail() {
     }
   };
 
+  const formatCompleteDate = (date: Date) => {
+    return format(date, "dd/MM/yyyy HH:mm");
+  };
+
   const formatDate = (date: Date) => {
     return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   };
@@ -139,17 +173,30 @@ export function ShiftDetail() {
     return format(date, "HH:mm");
   };
 
-  const isUpcoming = shift.date >= new Date();
-  const isPast = shift.date < new Date();
+  const shiftStartDate = new Date(shift.startDate);
+  const shiftEndDate = new Date(shift.endDate);
+
+  const formatCompleteStartDate = formatCompleteDate(shiftStartDate);
+  const formatCompleteEndDate = formatCompleteDate(shiftEndDate);
+
+  const isUpcoming = shiftStartDate >= new Date();
+  const isPast = shiftStartDate < new Date();
+
+  const shiftDuration = formatShiftDuration(shiftStartDate, shiftEndDate);
+
+  const formattedDatePeriod =
+    formatCompleteStartDate == formatCompleteEndDate
+      ? `${formatCompleteStartDate}`
+      : `${formatCompleteStartDate} - ${formatCompleteDate(shiftEndDate)}`;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <div className="w-full">
+      <div className="">
         {/* Header */}
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate(`/groups/${shift.group?.id || ""}`)}
+            onClick={() => navigate(`/groups/${group.id || ""}`)}
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -161,9 +208,9 @@ export function ShiftDetail() {
               <h1 className="text-3xl font-bold text-foreground mb-2">
                 {shift.title || "Escala"}
               </h1>
-              {shift.group && (
+              {group && (
                 <p className="text-muted-foreground text-lg mb-4">
-                  {shift.group.name}
+                  {group.name}
                 </p>
               )}
               <div className="flex flex-wrap gap-2 mb-4">
@@ -182,20 +229,21 @@ export function ShiftDetail() {
                     ? "Preenchido"
                     : "Cancelado"}
                 </Badge>
-                {isPast && <Badge variant="outline">Finalizado</Badge>}
+                {isPast && (
+                  <Badge variant="outline">
+                    Finalizado - Já ocorreu a escala
+                  </Badge>
+                )}
               </div>
 
-              <div className="space-y-2 text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{formatDate(shift.date)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>
-                    {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
-                  </span>
-                </div>
+              <div className="text-muted-foreground flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span> {formattedDatePeriod} </span>
+              </div>
+
+              <div className="text-muted-foreground flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span> {shiftDuration} </span>
               </div>
 
               {shift.notes && (
@@ -233,11 +281,11 @@ export function ShiftDetail() {
                             </div>
                             <div>
                               <h3 className="font-semibold">
-                                {shiftPosition.position.name}
+                                {shiftPosition.positionName}
                               </h3>
-                              {shiftPosition.position.description && (
+                              {shiftPosition.positionDescription && (
                                 <p className="text-sm text-muted-foreground">
-                                  {shiftPosition.position.description}
+                                  {shiftPosition.positionDescription}
                                 </p>
                               )}
                             </div>
@@ -252,10 +300,7 @@ export function ShiftDetail() {
                               shiftPosition.volunteersCount <
                                 shiftPosition.requiredCount && (
                                 <SignupPositionDialog
-                                  positionName={shiftPosition.position.name}
-                                  onSignup={(data) =>
-                                    signupForShift(shiftPosition.id, data)
-                                  }
+                                  shiftPosition={shiftPosition}
                                 />
                               )}
                           </div>
@@ -278,7 +323,7 @@ export function ShiftDetail() {
                                   </div>
                                   <div>
                                     <p className="font-medium text-sm">
-                                      {volunteer.user?.name}
+                                      {volunteer.userName}
                                     </p>
                                     {volunteer.notes && (
                                       <p className="text-xs text-muted-foreground">
@@ -299,10 +344,7 @@ export function ShiftDetail() {
                                         size="sm"
                                         variant="outline"
                                         onClick={() =>
-                                          updateVolunteerStatus(
-                                            volunteer.id,
-                                            VolunteerStatus.CONFIRMED
-                                          )
+                                          confirmShiftAssignment(volunteer)
                                         }
                                       >
                                         <UserCheck className="h-3 w-3" />
@@ -311,7 +353,7 @@ export function ShiftDetail() {
                                         size="sm"
                                         variant="outline"
                                         onClick={() =>
-                                          cancelSignup(volunteer.id)
+                                          cancelShiftAssignment(volunteer)
                                         }
                                       >
                                         <UserMinus className="h-3 w-3" />
@@ -379,17 +421,23 @@ export function ShiftDetail() {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Data</span>
+                  <span className="text-sm text-muted-foreground">
+                    Data de Inicio
+                  </span>
                   <span className="text-sm font-medium">
-                    {format(shift.date, "dd/MM/yyyy")}
+                    {formatCompleteStartDate}
                   </span>
                 </div>
+
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Horário</span>
+                  <span className="text-sm text-muted-foreground">
+                    Data de Término
+                  </span>
                   <span className="text-sm font-medium">
-                    {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
+                    {formatCompleteEndDate}
                   </span>
                 </div>
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
                     Posições

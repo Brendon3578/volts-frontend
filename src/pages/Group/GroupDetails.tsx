@@ -38,6 +38,7 @@ import { useAuth } from "../../context/Auth/useAuth";
 import { useGroupCompleteView } from "../../hooks/useGroups";
 import { useShiftsByGroupId } from "../../hooks/useShifts";
 import { usePositionsByGroupId } from "../../hooks/usePositions";
+import { useMemo } from "react";
 
 export function GroupDetails() {
   const { id: groupId } = useParams<{ id: string }>();
@@ -52,9 +53,19 @@ export function GroupDetails() {
     usePositionsByGroupId(groupId!);
 
   const { state } = useAuth();
-  const { user } = state;
+  const { user } = state; // será usado depois
 
-  if (groupLoading) {
+  const upcomingShifts = useMemo(
+    () => shifts?.filter((s) => new Date(s.startDate) >= new Date()),
+    [shifts]
+  );
+
+  const pastShifts = useMemo(
+    () => shifts?.filter((s) => new Date(s.startDate) < new Date()),
+    [shifts]
+  );
+
+  if (groupLoading || positionsLoading || shiftsLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -117,13 +128,6 @@ export function GroupDetails() {
     );
   }
 
-  const upcomingShifts = shifts?.filter(
-    (shift) => new Date(shift.startDate) >= new Date()
-  );
-  const pastShifts = shifts?.filter(
-    (shift) => new Date(shift.startDate) < new Date()
-  );
-
   return (
     <div className="w-full">
       {/* Header */}
@@ -164,9 +168,9 @@ export function GroupDetails() {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
         {/* Main Content */}
-        <main className="lg:col-span-3">
+        <main className="lg:col-span-5">
           <Tabs defaultValue="shifts" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-2 *:cursor-pointer">
               <TabsTrigger value="shifts">Escalas</TabsTrigger>
@@ -253,84 +257,15 @@ export function GroupDetails() {
                 <PositionFormDialog // refazer
                   group={group}
                 />
-
-                {/* <Button
-                    onClick={() =>
-                      createPosition({
-                        name: "Nova Posição",
-                        description: "",
-                        groupId: group.id,
-                      })
-                    }
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Nova Posição
-                  </Button> */}
               </div>
 
               <PositionsTable positions={positions} group={group} />
-
-              {/* {positionsLoading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <Card key={i}>
-                        <CardHeader>
-                          <Skeleton className="h-5 w-32" />
-                          <Skeleton className="h-4 w-48" />
-                        </CardHeader>
-                      </Card>
-                    ))}
-                  </div>
-                ) : positions.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {positions.map((position) => (
-                      <Card key={position.id} className="card-elevated">
-                        <CardHeader>
-                          <CardTitle className="text-base">
-                            {position.name}
-                          </CardTitle>
-                          {position.description && (
-                            <CardDescription>
-                              {position.description}
-                            </CardDescription>
-                          )}
-                        </CardHeader>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <Card className="text-center py-12">
-                    <CardContent>
-                      <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">
-                        Nenhuma posição cadastrada
-                      </h3>
-                      <p className="text-muted-foreground mb-6">
-                        Crie posições para organizar as responsabilidades nas
-                        escalas
-                      </p>
-
-                      <Button
-                        onClick={() =>
-                          createPosition({
-                            name: "Nova Posição",
-                            description: "",
-                            groupId: group.id,
-                          })
-                        }
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Criar Primeira Posição
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )} */}
             </TabsContent>
           </Tabs>
         </main>
 
         {/* Sidebar */}
-        <section className="space-y-6">
+        <section className="lg:col-span-2 space-y-6">
           {/* Group Stats */}
           <Card className="card-elevated">
             <CardHeader>
@@ -391,21 +326,6 @@ export function GroupDetails() {
                   </Button>
                 }
               />
-
-              {/* <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  onClick={() =>
-                    createPosition({
-                      name: "Nova Posição",
-                      description: "",
-                      groupId: group.id,
-                    })
-                  }
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nova Posição
-                </Button> */}
             </CardContent>
           </Card>
         </section>

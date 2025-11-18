@@ -3,7 +3,6 @@
  * Lists all groups with search and filter functionality
  */
 
-import { useGroups } from "../../hooks/useGroupsOld";
 import {
   Card,
   CardContent,
@@ -14,16 +13,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Skeleton } from "../../components/ui/skeleton";
-import { GroupCard } from "../../components/layout/GroupCard";
-import { CreateGroupDialog } from "../../components/layout/CreateGroupDialog";
-import {
-  Search,
-  Users,
-  Activity,
-  ArrowLeft,
-  TriangleAlert,
-  Building2,
-} from "lucide-react";
+import { Search, Users, TriangleAlert, Building2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EnterOrganizationCard } from "../../components/layout/organization/EnterOrganizationCard";

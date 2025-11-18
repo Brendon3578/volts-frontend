@@ -74,3 +74,5 @@ export function isUserOrganizationVolunteer(role?: string) {
   if (!role) return false;
   return OrganizationRole.MEMBER == role;
 }
+
+export const DEFAULT_REACT_QUERY_STALE_TIME = 10 * 60 * 1000; // 10 MINUTOS

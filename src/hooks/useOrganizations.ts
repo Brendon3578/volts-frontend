@@ -24,6 +24,7 @@ import type {
 } from "../models/organization";
 import type { Organization } from "../models";
 import { useAuth } from "../context/Auth/useAuth";
+import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 // todo: centralizar depois as querykey
 const GROUPS_KEY = "groups";
@@ -43,7 +44,7 @@ export const useAvailableOrganizations = () => {
   return useQuery({
     queryKey,
     queryFn: getAvailableOrganizations,
-    staleTime: 1000 * 60 * 5, // 5 min de cache
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 min de cache
   });
 };
 /**
@@ -54,7 +55,7 @@ export const useUserOrganizations = (userId?: string) =>
     queryKey: ["userOrganizations", userId],
     queryFn: getUserOrganizations,
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
   });
 
 export const useOrganizationById = (orgId?: string) =>
@@ -62,7 +63,7 @@ export const useOrganizationById = (orgId?: string) =>
     queryKey: ["organizations", orgId],
     queryFn: ({ queryKey }) => getOrganizationById(queryKey[1] as string),
     enabled: !!orgId, // só faz a requisição se o id existir
-    staleTime: 1000 * 60 * 5, // cache por 5 minutos
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // cache por 5 minutos
     retry: 1, // tenta apenas uma vez em caso de erro
   });
 
@@ -221,7 +222,7 @@ export const useOrganizationsCompleteView = () =>
   useQuery({
     queryKey: ["organizationsCompleteView"],
     queryFn: getOrganizationsCompleteView,
-    staleTime: 1000 * 60 * 5, // 5 min de cache
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 min de cache
   });
 
 /**
@@ -239,7 +240,7 @@ export const useOrganizationCompleteViewById = (id?: string) => {
     queryKey: [queryKey],
     queryFn: () => getOrganizationCompleteViewById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
     retry: 1,
   });
 };
@@ -252,7 +253,7 @@ export const useOrganizationMembers = (organizationId?: string) =>
     queryKey: ["organizationMembers", organizationId],
     queryFn: ({ queryKey }) => getOrganizationMembers(queryKey[1] as string),
     enabled: !!organizationId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
   });
 
 // --------------- MUTATIONS ---------------

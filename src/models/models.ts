@@ -1,7 +1,6 @@
 import type {
   ShiftStatusType,
   OrganizationRoleType,
-  GroupRoleType,
   VolunteerStatusType,
 } from "./types";
 

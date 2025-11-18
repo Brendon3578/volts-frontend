@@ -27,24 +27,26 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { UserPlus } from "lucide-react";
 import type { SignupPositionForm } from "../../models";
+import { useApplyToShiftPosition } from "../../hooks/useShiftPositionAssignment";
+import type { ShiftPositionDto } from "../../models/shift";
+import { toast } from "sonner";
 
 const signupSchema = z.object({
   notes: z.string().max(500, "Observações muito longas").optional(),
 });
 
 interface SignupPositionDialogProps {
-  positionName: string;
-  onSignup: (data: SignupPositionForm) => Promise<boolean>;
+  shiftPosition: ShiftPositionDto;
   trigger?: React.ReactNode;
 }
 
 export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
-  positionName,
-  onSignup,
+  shiftPosition,
   trigger,
 }) => {
   const [open, setOpen] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { mutateAsync: applyToShiftPosition, isPending: isSubmitting } =
+    useApplyToShiftPosition();
 
   const form = useForm<SignupPositionForm>({
     resolver: zodResolver(signupSchema),
@@ -55,16 +57,20 @@ export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
 
   const onSubmit = async (data: SignupPositionForm) => {
     try {
-      setIsSubmitting(true);
-      const result = await onSignup(data);
+      const result = await applyToShiftPosition({
+        shiftPositionId: shiftPosition.id,
+        payload: data,
+      });
+
       if (result) {
         form.reset();
+        toast.success("Inscrição realizada com sucesso");
+
         setOpen(false);
       }
     } catch (error) {
+      toast.error("Falha ao se inscrever na escala");
       // Error handling is done in the parent component/hook
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -80,7 +86,9 @@ export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Inscrever-se para {positionName}</DialogTitle>
+          <DialogTitle>
+            Inscrever-se para {shiftPosition.positionName}
+          </DialogTitle>
           <DialogDescription>
             Confirme sua inscrição para esta posição. Você pode adicionar
             observações opcionais.

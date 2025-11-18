@@ -6,6 +6,7 @@ import { RouterProvider } from "react-router-dom";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { router } from "./routes/router";
 import { AuthProvider } from "./context/Auth/AuthProvider";
+import { DEFAULT_REACT_QUERY_STALE_TIME } from "./utils";
 
 // Criando uma instância do QueryClient
 const queryClient = new QueryClient({
@@ -13,7 +14,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5, // 5 minutos: tempo que os dados são considerados "frescos"
+      staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutos: tempo que os dados são considerados "frescos"
     },
   },
 });

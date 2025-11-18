@@ -1,9 +1,5 @@
-import { useMemo, useState } from "react";
-import type {
-  CreatePositionForm,
-  GroupWithDetails,
-  Position,
-} from "../../models";
+import { memo, useCallback, useMemo, useState } from "react";
+import type { CreatePositionForm } from "../../models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -26,7 +22,7 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { Edit, Plus } from "lucide-react";
+import { Contact, Edit, Plus } from "lucide-react";
 import { Label } from "../ui/label";
 import type { GroupCompleteViewDto } from "../../api/types/group";
 import type { CreatePositionDto, PositionDto } from "../../models/position";
@@ -45,7 +41,7 @@ const positionFormSchema = z.object({
   groupId: z.string(),
 });
 
-export function PositionFormDialog({
+export const PositionFormDialog = memo(function PositionFormDialog({
   group,
   trigger,
   existingPosition,
@@ -67,84 +63,85 @@ export function PositionFormDialog({
       description: existingPosition?.description || "",
       groupId: group.id,
     },
+    shouldUnregister: false,
   });
 
   // Reset form when existingPosition changes (useful for edit mode)
 
-  const onSubmit = async (data: CreatePositionForm) => {
-    // Add groupId to the data before submitting
-    try {
-      let result: PositionDto | null = null;
+  const onSubmit = useCallback(
+    async (data: CreatePositionForm) => {
+      try {
+        let result: PositionDto | null = null;
 
-      if (isEditMode && existingPosition) {
-        result = await updatePosition({
-          id: existingPosition.id,
-          payload: data,
-        });
-      } else if (isEditMode == false) {
-        result = await createPosition(data);
+        if (isEditMode && existingPosition) {
+          result = await updatePosition({
+            id: existingPosition.id,
+            payload: data,
+          });
+        } else {
+          result = await createPosition(data);
+        }
+
+        if (result) {
+          toast.success(
+            `${isEditMode ? "Atualizado" : "Criado"} posição com sucesso.`
+          );
+          setOpen(false);
+        }
+      } catch (error) {
+        console.error("Erro:", error);
       }
+    },
+    [isEditMode, existingPosition, updatePosition, createPosition]
+  );
 
-      if (result) {
-        toast.success(
-          `${isEditMode ? "Atualizado" : "Criado"} posição com sucesso.`
-        );
-        setOpen(false);
-      }
-    } catch (error) {
-      console.error(
-        `Error ${isEditMode ? "updating" : "creating"} position:`,
-        error
-      );
-      // Error handling is done in the parent component/hook
-    }
-  };
-
-  const dialogDetails = isEditMode
-    ? {
-        title: "Editar Posição",
-        description: "Modifique os dados da posição existente.",
-        submit: "Salvar Alterações",
-        loading: "Salvando...",
-      }
-    : {
-        title: "Criar Posição",
-        description: "Crie uma nova posição de escala no grupo.",
-        submit: "Criar Posição",
-        loading: "Criando...",
-      };
-
-  const defaultTrigger = useMemo(
-    () => (
-      <Button>
-        {isEditMode ? (
-          <>
-            <Edit className="mr-2 h-4 w-4" />
-            Editar Posição
-          </>
-        ) : (
-          <>
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Posição
-          </>
-        )}
-      </Button>
-    ),
+  const dialogDetails = useMemo(
+    () =>
+      isEditMode
+        ? {
+            title: "Editar Posição",
+            description: "Modifique os dados da posição existente.",
+            submit: "Salvar Alterações",
+            loading: "Salvando...",
+            buttonLabel: "Editar Posição",
+            icon: Edit,
+          }
+        : {
+            title: "Criar Posição",
+            description: "Crie uma nova posição de escala no grupo.",
+            submit: "Criar Posição",
+            loading: "Criando...",
+            buttonLabel: "Nova Posição",
+            icon: Contact,
+          },
     [isEditMode]
   );
 
+  const defaultTrigger = useMemo(() => {
+    const Icon = dialogDetails.icon;
+    return (
+      <Button>
+        <Icon className="mr-2 h-4 w-4" />
+        {dialogDetails.buttonLabel}
+      </Button>
+    );
+  }, [dialogDetails]);
+
   console.log("renderizou");
 
-  function handleOpenChange(isOpen: boolean) {
-    setOpen(isOpen);
-    if (isOpen) {
-      form.reset({
-        name: existingPosition?.name ?? "",
-        description: existingPosition?.description ?? "",
-        groupId: group.id,
-      });
-    }
-  }
+  const handleOpenChange = useCallback(
+    (isOpen: boolean) => {
+      setOpen(isOpen);
+      if (isOpen) {
+        form.reset({
+          name: existingPosition?.name ?? "",
+          description: existingPosition?.description ?? "",
+          groupId: group.id,
+        });
+      }
+    },
+    [existingPosition, group.id, form]
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -222,4 +219,4 @@ export function PositionFormDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});

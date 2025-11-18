@@ -1,17 +1,8 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as groupApi from "../api/endpoints/groupEndpoint";
-import type {
-  GroupDto,
-  CreateGroupDto,
-  UpdateGroupDto,
-  GroupCompleteViewDto,
-} from "../api/types/group";
+import type { CreateGroupDto, UpdateGroupDto } from "../api/types/group";
 import { useAuth } from "../context/Auth/useAuth";
+import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 // Cache keys
 const GROUPS_KEY = "groups";
@@ -27,7 +18,7 @@ export const useGroups = () => {
     queryKey,
     queryFn: groupApi.getGroups,
     enabled: !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutes
     refetchOnWindowFocus: true,
   });
 };
@@ -46,7 +37,7 @@ export const useGroupsCompleteViewByOrganizationId = (
     queryKey,
     queryFn: () =>
       groupApi.getGroupsCompleteViewByOrganizationId(organizationId),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutes
     refetchOnWindowFocus: true,
   });
 };
@@ -61,12 +52,12 @@ export const useGroupCompleteView = (id: string) => {
     queryKey,
     queryFn: () => groupApi.getGroupCompleteViewById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutes
     refetchOnWindowFocus: true,
   });
 };
 
-export const useGroup = (id: string) => {
+export const useGroup = (id?: string) => {
   const { state } = useAuth();
   const user = state.user;
 
@@ -76,7 +67,7 @@ export const useGroup = (id: string) => {
     queryKey,
     queryFn: () => groupApi.getGroupById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutes
     refetchOnWindowFocus: true,
   });
 };
