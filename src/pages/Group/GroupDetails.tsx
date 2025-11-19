@@ -39,6 +39,9 @@ import { useGroupCompleteView } from "../../hooks/useGroups";
 import { useShiftsByGroupId } from "../../hooks/useShifts";
 import { usePositionsByGroupId } from "../../hooks/usePositions";
 import { useMemo } from "react";
+import { WithPermission } from "./../../components/common/WithPermission";
+import { useSelfOrganizationRole } from "../../hooks/useOrganizations";
+import { isUserOrganizationAdmin, isUserOrganizationLeader } from "../../utils";
 
 export function GroupDetails() {
   const { id: groupId } = useParams<{ id: string }>();
@@ -65,7 +68,21 @@ export function GroupDetails() {
     [shifts]
   );
 
-  if (groupLoading || positionsLoading || shiftsLoading) {
+  const { data: userRole, isLoading: roleLoading } = useSelfOrganizationRole(
+    group?.organizationId
+  );
+
+  const isUserAdminOrLeader =
+    isUserOrganizationAdmin(userRole?.role) ||
+    isUserOrganizationLeader(userRole?.role);
+
+  if (
+    groupLoading ||
+    positionsLoading ||
+    shiftsLoading ||
+    roleLoading ||
+    !userRole
+  ) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -156,15 +173,17 @@ export function GroupDetails() {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/groups/${group.id}/settings`)}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Configurações
-            </Button>
-          </div>
+          <WithPermission can={isUserAdminOrLeader}>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/groups/${group.id}/settings`)}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Editar Grupo
+              </Button>
+            </div>
+          </WithPermission>
         </div>
       </section>
 
@@ -180,9 +199,15 @@ export function GroupDetails() {
             <TabsContent value="shifts" className="space-y-6">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-semibold">Escalas do Grupo</h2>
-                {!positionsLoading && positions && positions.length > 0 && (
-                  <CreateShiftDialog groupId={group.id} positions={positions} />
-                )}
+                {isUserAdminOrLeader &&
+                  !positionsLoading &&
+                  positions &&
+                  positions.length > 0 && (
+                    <CreateShiftDialog
+                      groupId={group.id}
+                      positions={positions}
+                    />
+                  )}
               </div>
 
               {shiftsLoading ? (
@@ -240,12 +265,14 @@ export function GroupDetails() {
                         "Crie a primeira escala para este grupo"
                       )}
                     </p>
-                    {positions && positions.length > 0 && (
-                      <CreateShiftDialog
-                        groupId={group.id}
-                        positions={positions}
-                      />
-                    )}
+                    {isUserAdminOrLeader &&
+                      positions &&
+                      positions.length > 0 && (
+                        <CreateShiftDialog
+                          groupId={group.id}
+                          positions={positions}
+                        />
+                      )}
                   </CardContent>
                 </Card>
               )}
@@ -254,12 +281,18 @@ export function GroupDetails() {
             <TabsContent value="positions" className="space-y-6">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-semibold">Posições do Grupo</h2>
-                <PositionFormDialog // refazer
-                  group={group}
-                />
+                <WithPermission can={isUserAdminOrLeader}>
+                  <PositionFormDialog // refazer
+                    group={group}
+                  />
+                </WithPermission>
               </div>
 
-              <PositionsTable positions={positions} group={group} />
+              <PositionsTable
+                positions={positions}
+                group={group}
+                isUserAdminOrLeader={isUserAdminOrLeader}
+              />
             </TabsContent>
           </Tabs>
         </main>
@@ -299,35 +332,40 @@ export function GroupDetails() {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="card-elevated">
-            <CardHeader>
-              <CardTitle className="text-base">Ações Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {positions && positions.length > 0 && (
-                <CreateShiftDialog
-                  groupId={group.id}
-                  positions={positions}
+          <WithPermission can={isUserAdminOrLeader}>
+            <Card className="card-elevated">
+              <CardHeader>
+                <CardTitle className="text-base">Ações Rápidas</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {positions && positions.length > 0 && (
+                  <CreateShiftDialog
+                    groupId={group.id}
+                    positions={positions}
+                    trigger={
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Nova Escala
+                      </Button>
+                    }
+                  />
+                )}
+
+                <PositionFormDialog
+                  group={group}
                   trigger={
                     <Button variant="outline" className="w-full justify-start">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Nova Escala
+                      <Plus className="mr-2 h-4 w-4" />
+                      Nova Posição
                     </Button>
                   }
                 />
-              )}
-
-              <PositionFormDialog
-                group={group}
-                trigger={
-                  <Button variant="outline" className="w-full justify-start">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Nova Posição
-                  </Button>
-                }
-              />
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </WithPermission>
         </section>
       </div>
     </div>

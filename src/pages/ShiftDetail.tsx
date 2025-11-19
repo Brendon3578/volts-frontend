@@ -40,6 +40,38 @@ import {
 import type { ShiftVolunteerDto } from "../models/shiftCompleteView";
 import { formatShiftDuration } from "../utils";
 import { toast } from "sonner";
+import { ConfirmActionDialog } from "../components/common/ConfirmActionDialog";
+import { useDeleteShift } from "../hooks/useShifts";
+import { useSelfOrganizationRole } from "../hooks/useOrganizations";
+import { Trash2 } from "lucide-react";
+import { Edit } from "lucide-react";
+import { CreateShiftDialog } from "./../components/layout/CreateShiftDialog";
+import { EditShiftDialog } from "./../components/layout/EditShiftDialog";
+import { usePositionsByGroupId } from "../hooks/usePositions";
+import { WithPermission } from "./../components/common/WithPermission";
+import { useAuth } from "../context/Auth/useAuth";
+
+const getStatusIcon = (status: VolunteerStatusType) => {
+  switch (status) {
+    case VolunteerStatus.CONFIRMED:
+      return <CheckCircle className="h-4 w-4 text-success" />;
+    case VolunteerStatus.PENDING:
+      return <AlertCircle className="h-4 w-4 text-warning" />;
+    case VolunteerStatus.CANCELLED:
+      return <XCircle className="h-4 w-4 text-destructive" />;
+  }
+};
+
+const getStatusText = (status: VolunteerStatusType) => {
+  switch (status) {
+    case VolunteerStatus.CONFIRMED:
+      return "Confirmado";
+    case VolunteerStatus.PENDING:
+      return "Pendente";
+    case VolunteerStatus.CANCELLED:
+      return "Cancelado";
+  }
+};
 
 export function ShiftDetail() {
   const { id } = useParams<{ id: string }>();
@@ -55,26 +87,44 @@ export function ShiftDetail() {
   const { data: group, isLoading: isGroupLoading } = useGroup(shift?.groupId);
   const { mutateAsync: confirmAssignment } = useConfirmAssignment();
   const { mutateAsync: cancelAssignment } = useCancelAssignment();
+  const { mutateAsync: deleteShift } = useDeleteShift();
+  const { data: userRole } = useSelfOrganizationRole(group?.organizationId);
+  const isUserAdminOrLeader = Boolean(
+    userRole?.role && (userRole.role === "ADMIN" || userRole.role === "LEADER")
+  );
+  const { state } = useAuth();
+  const currentUserId = state.user?.id;
 
-  async function confirmShiftAssignment(shiftPosition: ShiftVolunteerDto) {
+  // atualizar isso aqui
+
+  const { data: positions, isLoading: positionsLoading } =
+    usePositionsByGroupId(shift?.groupId);
+
+  async function confirmShiftAssignment(
+    shiftPosition: ShiftVolunteerDto,
+    shiftId: string
+  ) {
     try {
-      confirmAssignment({ id: shiftPosition.id });
+      confirmAssignment({ id: shiftPosition.id, shiftId });
       toast.success("Check-in feito, inscrição confirmada!");
     } catch (error) {
       toast.error("Erro ao fazer Check-in, confirmar inscrição");
     }
   }
 
-  function cancelShiftAssignment(shiftPosition: ShiftVolunteerDto) {
+  function cancelShiftAssignment(
+    shiftPosition: ShiftVolunteerDto,
+    shiftId: string
+  ) {
     try {
-      cancelAssignment({ id: shiftPosition.id });
+      cancelAssignment({ id: shiftPosition.id, shiftId: shiftId });
       toast.success("Inscrição cancelada!");
     } catch (error) {
       toast.error("Erro ao  cancelar inscrição");
     }
   }
 
-  if (isLoading || isGroupLoading || !group) {
+  if (isLoading || isGroupLoading || !group || positionsLoading || !positions) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -139,38 +189,8 @@ export function ShiftDetail() {
     );
   }
 
-  const getStatusIcon = (status: VolunteerStatusType) => {
-    switch (status) {
-      case VolunteerStatus.CONFIRMED:
-        return <CheckCircle className="h-4 w-4 text-success" />;
-      case VolunteerStatus.PENDING:
-        return <AlertCircle className="h-4 w-4 text-warning" />;
-      case VolunteerStatus.CANCELLED:
-        return <XCircle className="h-4 w-4 text-destructive" />;
-    }
-  };
-
-  const getStatusText = (status: VolunteerStatusType) => {
-    switch (status) {
-      case VolunteerStatus.CONFIRMED:
-        return "Confirmado";
-      case VolunteerStatus.PENDING:
-        return "Pendente";
-      case VolunteerStatus.CANCELLED:
-        return "Cancelado";
-    }
-  };
-
   const formatCompleteDate = (date: Date) => {
     return format(date, "dd/MM/yyyy HH:mm");
-  };
-
-  const formatDate = (date: Date) => {
-    return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR });
-  };
-
-  const formatTime = (date: Date) => {
-    return format(date, "HH:mm");
   };
 
   const shiftStartDate = new Date(shift.startDate);
@@ -253,6 +273,15 @@ export function ShiftDetail() {
                 </div>
               )}
             </div>
+            <WithPermission can={isUserAdminOrLeader}>
+              <div className="flex items-start">
+                <EditShiftDialog
+                  shift={shift}
+                  organizationId={group.organizationId}
+                  positions={positions}
+                />
+              </div>
+            </WithPermission>
           </div>
         </div>
 
@@ -300,6 +329,7 @@ export function ShiftDetail() {
                               shiftPosition.volunteersCount <
                                 shiftPosition.requiredCount && (
                                 <SignupPositionDialog
+                                  shiftId={shift.id}
                                   shiftPosition={shiftPosition}
                                 />
                               )}
@@ -313,55 +343,15 @@ export function ShiftDetail() {
                               Voluntários:
                             </h4>
                             {shiftPosition.volunteers.map((volunteer) => (
-                              <div
+                              <ShiftAssignmentVolunteerRow
                                 key={volunteer.id}
-                                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <User className="h-4 w-4 text-primary" />
-                                  </div>
-                                  <div>
-                                    <p className="font-medium text-sm">
-                                      {volunteer.userName}
-                                    </p>
-                                    {volunteer.notes && (
-                                      <p className="text-xs text-muted-foreground">
-                                        {volunteer.notes}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {getStatusIcon(volunteer.status)}
-                                  <span className="text-xs font-medium">
-                                    {getStatusText(volunteer.status)}
-                                  </span>
-                                  {volunteer.status ===
-                                    VolunteerStatus.PENDING && (
-                                    <div className="flex gap-1">
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() =>
-                                          confirmShiftAssignment(volunteer)
-                                        }
-                                      >
-                                        <UserCheck className="h-3 w-3" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() =>
-                                          cancelShiftAssignment(volunteer)
-                                        }
-                                      >
-                                        <UserMinus className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
+                                volunteer={volunteer}
+                                isUserAdminOrLeader={isUserAdminOrLeader}
+                                currentUserId={currentUserId}
+                                shiftId={shift.id}
+                                cancelShiftAssignment={cancelShiftAssignment}
+                                confirmShiftAssignment={confirmShiftAssignment}
+                              />
                             ))}
                           </div>
                         )}
@@ -462,6 +452,32 @@ export function ShiftDetail() {
                     )}
                   </span>
                 </div>
+
+                <div className="flex justify-end">
+                  {isUserAdminOrLeader && (
+                    <ConfirmActionDialog
+                      title="Remover Escala"
+                      description="Tem certeza que deseja remover esta escala? Essa ação não poderá ser desfeita."
+                      onConfirm={async () => {
+                        try {
+                          await deleteShift(shift.id);
+                          toast.success("Escala removida com sucesso");
+                          navigate(`/groups/${group.id}`);
+                        } catch {
+                          toast.error("Falha ao remover escala");
+                        }
+                      }}
+                      variant="destructive"
+                      confirmLabel={"Apagar"}
+                      trigger={
+                        <Button variant="destructive" className="mt-2">
+                          <Trash2 className="h-4 w-4" />
+                          Apagar Escala
+                        </Button>
+                      }
+                    />
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -521,6 +537,79 @@ export function ShiftDetail() {
             </Card>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+type ShiftAssignmentVolunteerRowProps = {
+  volunteer: ShiftVolunteerDto;
+  isUserAdminOrLeader: boolean;
+  currentUserId?: string;
+  shiftId: string;
+  confirmShiftAssignment(
+    shiftPosition: ShiftVolunteerDto,
+    shiftId: string
+  ): Promise<void>;
+  cancelShiftAssignment(
+    shiftPosition: ShiftVolunteerDto,
+    shiftId: string
+  ): void;
+};
+
+function ShiftAssignmentVolunteerRow({
+  volunteer,
+  isUserAdminOrLeader,
+  currentUserId,
+  shiftId,
+  confirmShiftAssignment,
+  cancelShiftAssignment,
+}: ShiftAssignmentVolunteerRowProps) {
+  const isCurrentUserAuthor = volunteer.userId == currentUserId;
+
+  const canConfirmOrCancelAssignment =
+    isCurrentUserAuthor || isUserAdminOrLeader;
+
+  return (
+    <div
+      key={volunteer.id}
+      className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+    >
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+          <User className="h-4 w-4 text-primary" />
+        </div>
+        <div>
+          <p className="font-medium text-sm">{volunteer.userName}</p>
+          {volunteer.notes && (
+            <p className="text-xs text-muted-foreground">{volunteer.notes}</p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {getStatusIcon(volunteer.status)}
+        <span className="text-xs font-medium">
+          {getStatusText(volunteer.status)}
+        </span>
+        {volunteer.status === VolunteerStatus.PENDING &&
+          canConfirmOrCancelAssignment && (
+            <div className="flex gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => confirmShiftAssignment(volunteer, shiftId)}
+              >
+                <UserCheck className="h-3 w-3" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => cancelShiftAssignment(volunteer, shiftId)}
+              >
+                <UserMinus className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
       </div>
     </div>
   );

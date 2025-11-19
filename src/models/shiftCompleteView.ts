@@ -4,6 +4,7 @@ export interface ShiftVolunteerDto {
   id: string;
   userName: string;
   userEmail: string;
+  userId: string;
   notes?: string;
   status: VolunteerStatusType;
 }

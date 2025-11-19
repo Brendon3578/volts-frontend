@@ -7,6 +7,7 @@ import type {
   UpdateOrganizationDto,
   UserOrganization,
   InviteOrganizationMemberDto,
+  OrganizationUserRoleDto,
 } from "../../models/organization";
 import api from "../client";
 import type { GroupDto } from "../types/group";
@@ -182,4 +183,13 @@ export const deleteOrganizationMember = async (
   memberId: string
 ): Promise<void> => {
   await api.delete(`/Organizations/${organizationId}/members/${memberId}`);
+};
+
+export const getSelfRole = async (
+  organizationId: string
+): Promise<OrganizationUserRoleDto> => {
+  const { data } = await api.get(
+    `/Organizations/${organizationId}/members/self-role`
+  );
+  return data;
 };

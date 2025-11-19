@@ -1,5 +1,3 @@
-import { type GroupRoleType } from "../../models";
-
 export interface GroupDto {
   id: string;
   name: string;
@@ -28,14 +26,14 @@ export interface UpdateGroupDto {
   organizationId?: string;
 }
 
-export interface GroupCompleteViewDto {
+export interface GroupCompleteViewDto extends GroupDto {
   id: string;
   name: string;
   description?: string;
   organizationId: string;
   createdById: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   // Computed fields for UI
   upcomingShiftsCount?: number;
   totalShiftsCount?: number;

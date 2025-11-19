@@ -75,7 +75,7 @@ export function Login() {
         <div className="absolute rounded-full size-[max(20vw,300px)] bg-blue-500 bottom-3 -right-10 bg-radial-[at_25%_25%] from-blue-500 to-blue-700 to-75%" />
       </div>
 
-      <div className="z-100 min-h-screen w-full flex items-center justify-center bg-neutral-50 border border-l-neutral-100 shadow">
+      <div className="z-100 min-h-screen w-full flex items-center justify-center bg-background border border-l-neutral-100 shadow">
         <div className="p-6 w-full max-w-lg ">
           <Button
             variant={"outline"}

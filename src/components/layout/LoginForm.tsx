@@ -122,14 +122,23 @@ export function LoginForm() {
 
           <FieldSeparator>Ou entre com</FieldSeparator>
           <Field>
-            <Button variant="outline" type="button">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() =>
+                toast.warning("Conexão com o Google não realizada")
+              }
+            >
               <img src={googleIcon} alt="Ícone do google" className="size-4" />
               Entrar com o Google
             </Button>
 
             <FieldDescription className="text-center">
               Não tem uma conta?{" "}
-              <a href="/sign-up" className="underline underline-offset-4">
+              <a
+                href="/sign-up"
+                className="p-4 pl-0 underline underline-offset-4 text-neutral-800"
+              >
                 Cadastre-se
               </a>
             </FieldDescription>

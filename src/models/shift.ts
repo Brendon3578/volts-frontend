@@ -22,7 +22,7 @@ export interface ShiftDto {
   endDate: string;
   title?: string;
   notes?: string;
-  status: ShiftStatusType;
+  status: string;
   groupId: string;
   createdAt: string;
   updatedAt: string;

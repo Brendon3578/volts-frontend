@@ -115,7 +115,7 @@
 @theme {
   --font-poppins: "Poppins", sans-serif;
 
-  --text-shadow-xl: 0 4px 5px rgba(0, 0, 0, 0.3);
+  --text-shadow-xl: 0 4px 5px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {

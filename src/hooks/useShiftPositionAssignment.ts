@@ -45,9 +45,11 @@ export const useApplyToShiftPosition = () => {
     mutationFn: ({
       shiftPositionId,
       payload,
+      shiftId,
     }: {
       shiftPositionId: string;
       payload: CreateShiftPositionAssignmentDto;
+      shiftId?: string;
     }) => applyToShiftPosition(shiftPositionId, payload),
     onSuccess: (assignment, variables) => {
       queryClient.invalidateQueries({
@@ -56,6 +58,15 @@ export const useApplyToShiftPosition = () => {
       queryClient.invalidateQueries({
         queryKey: ["assignment", assignment.id],
       });
+      if (variables.shiftId) {
+        console.log("tem que invalidar");
+        queryClient.invalidateQueries({
+          queryKey: ["shift-complete-view", variables.shiftId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shift", variables.shiftId],
+        });
+      }
     },
   });
 };
@@ -64,14 +75,23 @@ export const useConfirmAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id }: { id: string }) => confirmAssignment(id),
-    onSuccess: (assignment) => {
+    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+      confirmAssignment(id),
+    onSuccess: (assignment, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["assignmentsByShiftPosition", assignment.shiftPositionId],
       });
       queryClient.invalidateQueries({
         queryKey: ["assignment", assignment.id],
       });
+      if (variables.shiftId) {
+        queryClient.invalidateQueries({
+          queryKey: ["shift-complete-view", variables.shiftId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shift", variables.shiftId],
+        });
+      }
     },
   });
 };
@@ -80,14 +100,23 @@ export const useCancelAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id }: { id: string }) => cancelAssignment(id),
-    onSuccess: (assignment) => {
+    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+      cancelAssignment(id),
+    onSuccess: (assignment, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["assignmentsByShiftPosition", assignment.shiftPositionId],
       });
       queryClient.invalidateQueries({
         queryKey: ["assignment", assignment.id],
       });
+      if (variables.shiftId) {
+        queryClient.invalidateQueries({
+          queryKey: ["shift-complete-view", variables.shiftId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shift", variables.shiftId],
+        });
+      }
     },
   });
 };
@@ -96,13 +125,22 @@ export const useDeleteAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id }: { id: string }) => deleteAssignment(id),
+    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+      deleteAssignment(id),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["assignment", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["assignmentsByShift"] });
       queryClient.invalidateQueries({
         queryKey: ["assignmentsByShiftPosition"],
       });
+      if (variables.shiftId) {
+        queryClient.invalidateQueries({
+          queryKey: ["shift-complete-view", variables.shiftId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["shift", variables.shiftId],
+        });
+      }
     },
   });
 };

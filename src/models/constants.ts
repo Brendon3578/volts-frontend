@@ -5,12 +5,6 @@ export const OrganizationRole = {
   MEMBER: "MEMBER",
 } as const;
 
-export const GroupRole = {
-  GROUP_LEADER: "GROUP_LEADER",
-  COORDINATOR: "COORDINATOR",
-  VOLUNTEER: "VOLUNTEER",
-} as const;
-
 export const ShiftStatus = {
   OPEN: "OPEN",
   FILLED: "FILLED",

@@ -38,10 +38,12 @@ const signupSchema = z.object({
 interface SignupPositionDialogProps {
   shiftPosition: ShiftPositionDto;
   trigger?: React.ReactNode;
+  shiftId: string;
 }
 
 export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
   shiftPosition,
+  shiftId,
   trigger,
 }) => {
   const [open, setOpen] = React.useState(false);
@@ -60,6 +62,7 @@ export const SignupPositionDialog: React.FC<SignupPositionDialogProps> = ({
       const result = await applyToShiftPosition({
         shiftPositionId: shiftPosition.id,
         payload: data,
+        shiftId: shiftId,
       });
 
       if (result) {

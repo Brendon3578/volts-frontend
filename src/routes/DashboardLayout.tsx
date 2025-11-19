@@ -21,11 +21,11 @@ const sidebarItems: SidebarLink[] = [
   //   href: "/groups",
   //   icon: Users,
   // },
-  {
-    title: "Calendário",
-    href: "/calendar",
-    icon: Calendar,
-  },
+  // {
+  //   title: "Calendário",
+  //   href: "/calendar",
+  //   icon: Calendar,
+  // },
   {
     title: "Configurações",
     href: "/settings",

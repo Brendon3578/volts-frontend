@@ -114,6 +114,7 @@ export const useUpdateGroup = () => {
   });
 };
 
+// OBS: depois invalidar a query do organization do /organizations/{id} -> complete view
 export const useDeleteGroup = () => {
   const queryClient = useQueryClient();
   const { state } = useAuth();

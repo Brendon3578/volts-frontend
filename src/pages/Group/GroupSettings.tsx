@@ -14,7 +14,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Skeleton } from "../../components/ui/skeleton";
-import { ArrowLeft, Users, CircleOff } from "lucide-react";
+import { ArrowLeft, Users, CircleOff, Trash2Icon, Trash2 } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import {
   Form,
@@ -32,10 +32,21 @@ import { updateGroupSchema } from "../../lib/schemas";
 import AdvancedImageUpload from "../../components/layout/GroupImageUpload";
 import { Label } from "../../components/ui/label";
 
-import { getGroupIcon, groupColors, iconOptions } from "../../utils";
-import { GroupTitle } from "./GroupTitle";
-import type { UpdateGroupDto } from "../../api/types/group";
 import {
+  getGroupIcon,
+  groupColors,
+  iconOptions,
+  isUserOrganizationAdmin,
+  isUserOrganizationLeader,
+} from "../../utils";
+import { GroupTitle } from "./GroupTitle";
+import type {
+  GroupCompleteViewDto,
+  GroupDto,
+  UpdateGroupDto,
+} from "../../api/types/group";
+import {
+  useDeleteGroup,
   useGroup,
   useGroupCompleteView,
   useUpdateGroup,
@@ -43,17 +54,38 @@ import {
 import { GroupColorSelector } from "../../components/groups/GroupColorSelector";
 import { GroupIconSelector } from "../../components/groups/GroupIconSelector";
 import { toast } from "sonner";
+import { ConfirmActionDialog } from "../../components/common/ConfirmActionDialog";
+import { useSelfOrganizationRole } from "../../hooks/useOrganizations";
+
+function GroupNotFound() {
+  const navigate = useNavigate();
+  return (
+    <div className="w-full bg-background flex items-center justify-center">
+      <Card className="max-w-md">
+        <CardContent className="text-center py-8">
+          <h2 className="text-xl font-semibold mb-2">Grupo não encontrado</h2>
+          <p className="text-muted-foreground mb-4">
+            O grupo que você está procurando não existe ou foi removido.
+          </p>
+          <Button onClick={() => navigate(-1)}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar aos Grupos
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export function GroupSettings() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const {
-    data: group,
-    isLoading: groupLoading,
-    refetch,
-  } = useGroupCompleteView(id!);
+  const { data: group, isLoading: isGroupLoading, refetch } = useGroup(id!);
   const { mutateAsync: updateGroup, isPending: isSubmitting } =
     useUpdateGroup();
+
+  const { mutateAsync: deleteGroupAction, isPending: isDeleting } =
+    useDeleteGroup();
 
   const form = useForm<UpdateGroupDto>({
     resolver: zodResolver(updateGroupSchema),
@@ -65,6 +97,13 @@ export function GroupSettings() {
       organizationId: group?.organizationId,
     },
   });
+  const { data: userRole, isLoading: roleLoading } = useSelfOrganizationRole(
+    group?.organizationId
+  );
+
+  const isUserAdminOrLeader =
+    isUserOrganizationAdmin(userRole?.role) ||
+    isUserOrganizationLeader(userRole?.role);
 
   const onSubmit = async (data: UpdateGroupDto) => {
     if (!id) return;
@@ -80,6 +119,18 @@ export function GroupSettings() {
       // Error handling is done in the parent component/hook
     }
   };
+
+  async function deleteGroup(group: GroupDto) {
+    try {
+      const { organizationId } = group;
+      await deleteGroupAction(group.id);
+      toast.success("Grupo removido com sucesso");
+
+      navigate(`/organizations/${organizationId}`);
+    } catch (error) {
+      toast.error("Falha ao remover grupo");
+    }
+  }
 
   console.log("renderizou");
 
@@ -97,7 +148,7 @@ export function GroupSettings() {
     [form]
   );
 
-  if (groupLoading || !group) {
+  if (isGroupLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -141,11 +192,19 @@ export function GroupSettings() {
     );
   }
 
+  if (!group) {
+    return <GroupNotFound />;
+  }
+
   return (
     <div className="w-full">
       {/* Header */}
 
-      <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+      <Button
+        variant="ghost"
+        onClick={() => navigate(`/groups/${group.id}`)}
+        className="mb-4"
+      >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Voltar à página de Grupos
       </Button>
@@ -300,14 +359,45 @@ export function GroupSettings() {
               />
             </CardContent>
           </Card>
-          <div className="flex justify-end space-x-2">
-            <Button onClick={() => navigate(-1)} variant={"outline"}>
-              Cancelar
-            </Button>
+          <div className="flex justify-between">
+            <ConfirmActionDialog
+              title="Apagar Grupo"
+              description="Esta ação é irreversível"
+              onConfirm={() => deleteGroup(group)}
+              variant="destructive"
+              confirmLabel={isDeleting ? "Apagando..." : "Apagar"}
+              trigger={
+                <Button variant={"destructive"} disabled={!isUserAdminOrLeader}>
+                  <Trash2 />
+                  Apagar Grupo
+                </Button>
+              }
+            >
+              <p className="mb-2 text-neutral-800">
+                Tudo isso será apagado também:
+              </p>
+              <ul className="list-disc ml-5 text-neutral-800">
+                <li>Histórico de todas as escalas feitas</li>
+                <li>Atividades e interações entre membros</li>
+              </ul>
+            </ConfirmActionDialog>
 
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar Alterações"}
-            </Button>
+            <div className="flex justify-end space-x-2">
+              <Button
+                onClick={() => navigate(-1)}
+                variant={"outline"}
+                disabled={isSubmitting || !isUserAdminOrLeader}
+              >
+                Cancelar
+              </Button>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting || !isUserAdminOrLeader}
+              >
+                {isSubmitting ? "Salvando..." : "Salvar Alterações"}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

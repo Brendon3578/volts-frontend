@@ -139,6 +139,7 @@ export function Home() {
                   <Button
                     variant="ghost"
                     className="justify-between w-full text-lg p-6"
+                    onClick={() => navigate("/login")}
                   >
                     Recursos
                     <span>
@@ -148,6 +149,7 @@ export function Home() {
                   <Button
                     variant="ghost"
                     className="justify-between w-full text-lg p-6"
+                    onClick={() => navigate("/login")}
                   >
                     Comunidade
                     <span>
@@ -169,10 +171,14 @@ export function Home() {
           {/* Menu Desktop */}
           <ul className="hidden sm:flex gap-2">
             <li>
-              <Button variant="link">Recursos</Button>
+              <Button variant="link" onClick={() => navigate("/login")}>
+                Recursos
+              </Button>
             </li>
             <li>
-              <Button variant="link">Comunidade</Button>
+              <Button variant="link" onClick={() => navigate("/login")}>
+                Comunidade
+              </Button>
             </li>
             <li>
               <Button onClick={() => navigate("/login")}>Entrar</Button>
@@ -199,7 +205,7 @@ export function Home() {
               size="xl"
               variant="secondary"
               className="font-semibold font-poppins shadow-lg bg-radial-[at_50%_25%] from-yellow-300 via-secondary to-yellow-600/50 to-90% hover:scale-105"
-              onClick={() => navigate("/discover")}
+              onClick={() => navigate("/login")}
             >
               Quero ser Voluntário
             </Button>
@@ -207,7 +213,7 @@ export function Home() {
               size="xl"
               variant="secondary"
               className="bg-white font-poppins bg-radial-[at_50%_25%] from-neutral-50 via-neutral-100 to-neutral-300/60 to-90% text-neutral-800 font-semibold hover:bg-neutral-200 shadow-lg hover:scale-105"
-              onClick={() => navigate("/discover")}
+              onClick={() => navigate("/login")}
             >
               Já tenho uma conta
             </Button>
@@ -275,7 +281,7 @@ export function Home() {
               <Button
                 size="lg"
                 className="ml-11 font-poppins mt-4 bg-gradient-to-r from-primary to-sky-400 text-white shadow-lg hover:scale-105 hover:from-primary/90 hover:to-sky-400/90"
-                onClick={() => navigate("/discover")}
+                onClick={() => navigate("/login")}
               >
                 Cadastre sua Organização
               </Button>

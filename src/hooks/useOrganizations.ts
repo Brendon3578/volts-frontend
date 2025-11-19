@@ -15,12 +15,14 @@ import {
   inviteOrganizationMember,
   removeOrganizationMember,
   deleteOrganizationMember,
+  getSelfRole,
 } from "../api/endpoints";
 import type {
   ChangeOrganizationMemberRoleDto,
   CreateOrganizationDto,
   UpdateOrganizationDto,
   InviteOrganizationMemberDto,
+  OrganizationUserRoleDto,
 } from "../models/organization";
 import type { Organization } from "../models";
 import { useAuth } from "../context/Auth/useAuth";
@@ -147,6 +149,15 @@ export const useDeleteOrganizationMember = () => {
   });
 };
 
+export const useSelfOrganizationRole = (organizationId?: string) =>
+  useQuery<OrganizationUserRoleDto>({
+    queryKey: ["organization", organizationId, "self-role"],
+    queryFn: ({ queryKey }) => getSelfRole(queryKey[1] as string),
+    enabled: !!organizationId,
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
+    retry: 1,
+  });
+
 /**
  * Atualiza uma organização
  */
@@ -161,8 +172,11 @@ export const useUpdateOrganization = () => {
       id: string;
       payload: UpdateOrganizationDto;
     }) => updateOrganization(id, payload),
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["userOrganizations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["organizationCompleteView", id],
+      });
     },
   });
 };
@@ -237,7 +251,7 @@ export const useOrganizationCompleteViewById = (id?: string) => {
     : ["organizationCompleteView", id];
 
   return useQuery({
-    queryKey: [queryKey],
+    queryKey,
     queryFn: () => getOrganizationCompleteViewById(id),
     enabled: !!id,
     staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
@@ -280,6 +294,9 @@ export const useChangeOrganizationMemberRole = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ["organizationCompleteView", organizationId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organization", organizationId, "self-role"],
       });
     },
   });

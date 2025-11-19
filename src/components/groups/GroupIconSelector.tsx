@@ -21,8 +21,8 @@ export const GroupIconSelector = memo(
       <button
         type="button"
         className={cn(
-          "flex items-center justify-center cursor-pointer w-10 h-10 p-2 rounded-full  hover:bg-neutral-600/10 transition-all",
-          isSelected && "scale-125"
+          "flex items-center justify-center cursor-pointer w-10 h-10 p-2 rounded-full  hover:bg-neutral-600/15 transition-all",
+          isSelected && "scale-125 bg-neutral-600/10"
         )}
         title={label}
         {...props}

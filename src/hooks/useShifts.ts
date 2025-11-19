@@ -65,10 +65,23 @@ export const useUpdateShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateShiftDto }) =>
-      updateShift(id, payload),
-    onSuccess: (_, { id }) => {
+    mutationFn: ({
+      id,
+      payload,
+      groupId,
+    }: {
+      id: string;
+      payload: UpdateShiftDto;
+      groupId?: string;
+    }) => updateShift(id, payload),
+    onSuccess: (_, { id, groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["shift", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["shift-complete-view", id],
+      });
+      if (groupId) {
+        queryClient.invalidateQueries({ queryKey: ["shifts", groupId] });
+      }
     },
   });
 };
@@ -81,8 +94,10 @@ export const useDeleteShift = () => {
 
   return useMutation({
     mutationFn: (id: string) => deleteShift(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["shifts"] });
+      queryClient.invalidateQueries({ queryKey: ["shift", id] });
+      queryClient.invalidateQueries({ queryKey: ["shift-complete-view", id] });
     },
   });
 };

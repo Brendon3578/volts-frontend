@@ -76,3 +76,7 @@ export interface InviteOrganizationMemberDto {
   invitedEmail: string;
   inviterRole: string;
 }
+export interface OrganizationUserRoleDto {
+  userId: string;
+  role: string;
+}
