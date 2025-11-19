@@ -127,8 +127,6 @@ export const PositionFormDialog = memo(function PositionFormDialog({
     );
   }, [dialogDetails]);
 
-  console.log("renderizou");
-
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
       setOpen(isOpen);

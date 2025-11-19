@@ -49,8 +49,6 @@ export const ConfirmActionDialog = memo(function ConfirmActionDialog({
     }
   }, [onConfirm]);
 
-  console.log("oi");
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}

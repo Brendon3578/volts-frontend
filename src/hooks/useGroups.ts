@@ -12,7 +12,9 @@ export const useGroups = () => {
   const { state } = useAuth();
   const user = state.user;
 
-  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+  const queryKey = user
+    ? [GROUPS_KEY, `${GROUPS_KEY}-${user.id}`]
+    : [GROUPS_KEY];
 
   return useQuery({
     queryKey,
@@ -46,13 +48,15 @@ export const useGroupCompleteView = (id: string) => {
   const { state } = useAuth();
   const user = state.user;
 
-  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+  const queryKey = user
+    ? [GROUP_KEY, id, `${GROUPS_KEY}-${user.id}`]
+    : [GROUP_KEY, id];
 
   return useQuery({
     queryKey,
     queryFn: () => groupApi.getGroupCompleteViewById(id),
     enabled: !!id,
-    staleTime: DEFAULT_REACT_QUERY_STALE_TIME, // 5 minutes
+    staleTime: DEFAULT_REACT_QUERY_STALE_TIME,
     refetchOnWindowFocus: true,
   });
 };
@@ -61,7 +65,9 @@ export const useGroup = (id?: string) => {
   const { state } = useAuth();
   const user = state.user;
 
-  const queryKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+  const queryKey = user
+    ? [GROUP_KEY, id, `${GROUPS_KEY}-${user.id}`]
+    : [GROUP_KEY, id];
 
   return useQuery({
     queryKey,
@@ -77,7 +83,9 @@ export const useCreateGroup = () => {
   const { state } = useAuth();
   const user = state.user;
 
-  const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+  const groupsKey = user
+    ? [GROUPS_KEY, `${GROUPS_KEY}-${user.id}`]
+    : [GROUPS_KEY];
 
   return useMutation({
     mutationFn: (payload: CreateGroupDto) => groupApi.createGroup(payload),
@@ -104,9 +112,11 @@ export const useUpdateGroup = () => {
     onSuccess: (_, variables) => {
       // Invalidate specific group and groups list
       const groupKey = user
-        ? [`${GROUP_KEY}-${user.id}-${variables.id}`]
-        : [`${GROUP_KEY}-${variables.id}`];
-      const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+        ? [GROUP_KEY, variables.id, `${GROUPS_KEY}-${user.id}`]
+        : [GROUP_KEY, variables.id];
+      const groupsKey = user
+        ? [GROUPS_KEY, `${GROUPS_KEY}-${user.id}`]
+        : [GROUPS_KEY];
 
       queryClient.invalidateQueries({ queryKey: groupKey });
       queryClient.invalidateQueries({ queryKey: groupsKey });
@@ -119,7 +129,9 @@ export const useDeleteGroup = () => {
   const queryClient = useQueryClient();
   const { state } = useAuth();
   const user = state.user;
-  const groupsKey = user ? [`${GROUPS_KEY}-${user.id}`] : [GROUPS_KEY];
+  const groupsKey = user
+    ? [GROUPS_KEY, `${GROUPS_KEY}-${user.id}`]
+    : [GROUPS_KEY];
 
   return useMutation({
     mutationFn: (id: string) => groupApi.deleteGroup(id),

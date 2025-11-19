@@ -143,6 +143,8 @@ export function GroupDetails() {
     );
   }
 
+  console.log(group);
+
   return (
     <div className="w-full">
       {/* Header */}
