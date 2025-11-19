@@ -1,13 +1,4 @@
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  LogOut,
-  Settings,
-  User,
-  Users,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, User } from "lucide-react";
 import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
 import type { SidebarLink } from "../../../types/layout";

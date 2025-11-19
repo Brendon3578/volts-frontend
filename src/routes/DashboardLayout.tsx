@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Users, Calendar, Settings, Bell, Building2 } from "lucide-react";
+import { Home, Settings, Bell, Building2 } from "lucide-react";
 import type { SidebarLink } from "../types/layout";
 import { Sidebar } from "./../components/layout/common/Sidebar";
 

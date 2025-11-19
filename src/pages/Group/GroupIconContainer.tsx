@@ -2,7 +2,6 @@ import { memo, useMemo } from "react";
 import { getBrightness, getGroupIcon } from "../../utils";
 import { House } from "lucide-react";
 import { cn } from "../../lib/utils";
-import type { ClassValue } from "clsx";
 
 interface GroupIconContainerProps {
   color: string | undefined;

@@ -8,7 +8,6 @@ import {
 } from "../../ui/table";
 import { Button } from "../../ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import type { CreatePositionForm } from "../../../models";
 import { PositionFormDialog } from "../PositionFormDialog";
 import { memo } from "react";
 import { ConfirmActionDialog } from "./../../common/ConfirmActionDialog";
@@ -16,7 +15,6 @@ import type { GroupCompleteViewDto } from "../../../api/types/group";
 import type { PositionDto } from "../../../models/position";
 import { useDeletePosition } from "../../../hooks/usePositions";
 import { toast } from "sonner";
-import type { OrganizationUserRoleDto } from "../../../models/organization";
 import { WithPermission } from "../../common/WithPermission";
 
 interface PositionsTableProps {

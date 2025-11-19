@@ -12,9 +12,8 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
 import { Skeleton } from "../../components/ui/skeleton";
-import { ArrowLeft, Users, CircleOff, Trash2Icon, Trash2 } from "lucide-react";
+import { ArrowLeft, CircleOff, Trash2 } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import {
   Form,
@@ -40,15 +39,10 @@ import {
   isUserOrganizationLeader,
 } from "../../utils";
 import { GroupTitle } from "./GroupTitle";
-import type {
-  GroupCompleteViewDto,
-  GroupDto,
-  UpdateGroupDto,
-} from "../../api/types/group";
+import type { GroupDto, UpdateGroupDto } from "../../api/types/group";
 import {
   useDeleteGroup,
   useGroup,
-  useGroupCompleteView,
   useUpdateGroup,
 } from "../../hooks/useGroups";
 import { GroupColorSelector } from "../../components/groups/GroupColorSelector";

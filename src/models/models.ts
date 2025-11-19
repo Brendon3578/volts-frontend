@@ -1,8 +1,4 @@
-import type {
-  ShiftStatusType,
-  OrganizationRoleType,
-  VolunteerStatusType,
-} from "./types";
+import type { OrganizationRoleType, VolunteerStatusType } from "./types";
 
 // Core entity types
 export interface Organization {

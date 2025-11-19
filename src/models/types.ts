@@ -5,11 +5,9 @@
 
 import type {
   OrganizationRole,
-  GroupRole,
   ShiftStatus,
   VolunteerStatus,
 } from "./constants";
-import type { Position, ShiftPosition, ShiftVolunteer, User } from "./models";
 
 export type OrganizationRoleType =
   (typeof OrganizationRole)[keyof typeof OrganizationRole];

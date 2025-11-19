@@ -26,7 +26,7 @@ interface ShiftCardProps {
   showActions?: boolean;
 }
 
-const getStatusVariant = (status: ShiftStatusType) => {
+const getStatusVariant = (status: ShiftStatusType | string) => {
   switch (status) {
     case ShiftStatus.OPEN:
       return "default";
@@ -39,7 +39,7 @@ const getStatusVariant = (status: ShiftStatusType) => {
   }
 };
 
-const getStatusText = (status: ShiftStatusType) => {
+const getStatusText = (status: ShiftStatusType | string) => {
   switch (status) {
     case ShiftStatus.OPEN:
       return "Aberto";

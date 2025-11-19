@@ -3,7 +3,6 @@
  * Displays group information in a card format
  */
 
-import React from "react";
 import {
   Card,
   CardContent,
@@ -12,8 +11,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { Users, Calendar, ArrowRight, CalendarClock } from "lucide-react";
+import { Calendar, ArrowRight, CalendarClock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GroupIconContainer } from "../../pages/Group/GroupIconContainer";
 import type { GroupCompleteViewDto } from "../../api/types/group";

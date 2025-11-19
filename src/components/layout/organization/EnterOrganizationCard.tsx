@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardContent,
 } from "../../ui/card";
-import { ArrowRight, Calendar, House, LogIn, Users } from "lucide-react";
+import { LogIn, Users } from "lucide-react";
 import { Button } from "../../ui/button";
 import type { Organization } from "../../../models";
 

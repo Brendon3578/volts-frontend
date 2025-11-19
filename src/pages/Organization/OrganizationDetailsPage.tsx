@@ -1,8 +1,7 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   useJoinOrganization,
   useLeaveOrganization,
-  useOrganizationById,
   useOrganizationCompleteViewById,
 } from "../../hooks/useOrganizations";
 import { Button } from "../../components/ui/button";
@@ -13,7 +12,6 @@ import {
   AlertCircleIcon,
   ArrowLeft,
   Building2,
-  CircleAlert,
   Leaf,
   LogIn,
   LogOut,

@@ -44,8 +44,6 @@ export function OrganizationMemberRow({
   const isCurrentUserMember = isUserOrganizationVolunteer(currentUserRole);
 
   const isRowAdmin = member.role === OrganizationRole.ADMIN;
-  const isRowMember = member.role === OrganizationRole.MEMBER;
-  const isRowLeader = member.role === OrganizationRole.LEADER;
 
   const isSelf = member.userId === currentUserId;
 

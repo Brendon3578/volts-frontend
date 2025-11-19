@@ -22,7 +22,7 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { Contact, Edit, Plus } from "lucide-react";
+import { Contact, Edit } from "lucide-react";
 import { Label } from "../ui/label";
 import type { GroupCompleteViewDto } from "../../api/types/group";
 import type { CreatePositionDto, PositionDto } from "../../models/position";

@@ -12,7 +12,7 @@ import {
 } from "../ui/dialog";
 import { Form } from "../ui/form";
 import { Button } from "../ui/button";
-import { Plus, AlertCircle, Edit } from "lucide-react";
+import { AlertCircle, Edit } from "lucide-react";
 import type { PositionDto } from "../../models/position";
 import { useUpdateShift } from "../../hooks/useShifts";
 import type {
@@ -25,7 +25,6 @@ import { useSelfOrganizationRole } from "../../hooks/useOrganizations";
 import { ShiftBasicInfoFields } from "./CreateShiftDialog/ShiftBasicInfoFields";
 import { ShiftDateFields } from "./CreateShiftDialog/ShiftDateFields";
 import { ShiftPositionsEditor } from "./CreateShiftDialog/ShiftPositionsEditor";
-import type { ShiftCompleteViewDto } from "../../models/shiftCompleteView";
 import { toast } from "sonner";
 
 const editShiftSchema = z.object({

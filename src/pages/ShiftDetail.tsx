@@ -28,10 +28,9 @@ import {
   XCircle,
 } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import type { VolunteerStatusType } from "../models";
 import { ShiftStatus, VolunteerStatus } from "../models";
-import { useShiftById, useShiftCompleteView } from "../hooks/useShifts";
+import { useShiftCompleteView } from "../hooks/useShifts";
 import { useGroup } from "../hooks/useGroups";
 import {
   useCancelAssignment,
@@ -44,8 +43,6 @@ import { ConfirmActionDialog } from "../components/common/ConfirmActionDialog";
 import { useDeleteShift } from "../hooks/useShifts";
 import { useSelfOrganizationRole } from "../hooks/useOrganizations";
 import { Trash2 } from "lucide-react";
-import { Edit } from "lucide-react";
-import { CreateShiftDialog } from "./../components/layout/CreateShiftDialog";
 import { EditShiftDialog } from "./../components/layout/EditShiftDialog";
 import { usePositionsByGroupId } from "../hooks/usePositions";
 import { WithPermission } from "./../components/common/WithPermission";

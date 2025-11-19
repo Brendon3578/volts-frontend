@@ -5,9 +5,7 @@ import {
   useUpdateOrganization,
   useDeleteOrganization,
   useOrganizationMembers,
-  useChangeOrganizationMemberRole,
   useInviteOrganizationMember,
-  useRemoveOrganizationMember,
 } from "../../hooks/useOrganizations";
 import {
   Card,
@@ -20,7 +18,6 @@ import { Input } from "../../components/ui/input";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -49,14 +46,10 @@ import type {
 } from "../../models/organization";
 import { ConfirmActionDialog } from "../../components/common/ConfirmActionDialog";
 import { OrganizationRole } from "../../models/constants";
-import type { OrganizationRoleType } from "../../models";
 import { OrganizationMemberRow } from "../../components/layout/organization/OrganizationMemberRow";
-import {
-  isUserOrganizationAdmin,
-  isUserOrganizationLeader,
-} from "./../../utils/constantsHelper";
+import { isUserOrganizationAdmin } from "./../../utils/constantsHelper";
 import { useAuth } from "../../context/Auth/useAuth";
-import axios, { isAxiosError } from "axios";
+import axios from "axios";
 import { Textarea } from "../../components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createOrganizationSchema } from "../../lib/schemas";

@@ -1,7 +1,6 @@
 import { memo } from "react";
-import type { GroupWithDetails } from "../../models";
 import { GroupIconContainer } from "./GroupIconContainer";
-import type { GroupCompleteViewDto, GroupDto } from "../../api/types/group";
+import type { GroupCompleteViewDto } from "../../api/types/group";
 
 interface GroupTitleProps {
   group: GroupCompleteViewDto;

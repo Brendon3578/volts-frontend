@@ -1,8 +1,6 @@
 import {
   ArrowLeft,
   BriefcaseBusiness,
-  ChevronLeft,
-  CornerDownLeft,
   Gauge,
   MessagesSquare,
   UsersRound,

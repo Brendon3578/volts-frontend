@@ -24,13 +24,10 @@ import type {
   InviteOrganizationMemberDto,
   OrganizationUserRoleDto,
 } from "../models/organization";
-import type { Organization } from "../models";
 import { useAuth } from "../context/Auth/useAuth";
 import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 // todo: centralizar depois as querykey
-const GROUPS_KEY = "groups";
-const GROUP_KEY = "group";
 
 /**
  * Lista todas as organizações disponíveis

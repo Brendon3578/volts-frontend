@@ -23,7 +23,6 @@ import { ShiftCard } from "../../components/layout/ShiftCard";
 import { CreateShiftDialog } from "../../components/layout/CreateShiftDialog";
 import {
   ArrowLeft,
-  Users,
   Calendar,
   Settings,
   Plus,
@@ -34,7 +33,6 @@ import {
 import { PositionFormDialog } from "../../components/layout/PositionFormDialog";
 import { PositionsTable } from "../../components/layout/tables/PositionsTable";
 import { GroupTitle } from "./GroupTitle";
-import { useAuth } from "../../context/Auth/useAuth";
 import { useGroupCompleteView } from "../../hooks/useGroups";
 import { useShiftsByGroupId } from "../../hooks/useShifts";
 import { usePositionsByGroupId } from "../../hooks/usePositions";
@@ -55,8 +53,8 @@ export function GroupDetails() {
   const { data: positions, isLoading: positionsLoading } =
     usePositionsByGroupId(groupId!);
 
-  const { state } = useAuth();
-  const { user } = state; // será usado depois
+  // const { state } = useAuth();
+  // const { user } = state; // será usado depois
 
   const upcomingShifts = useMemo(
     () => shifts?.filter((s) => new Date(s.startDate) >= new Date()),

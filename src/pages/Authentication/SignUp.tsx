@@ -27,7 +27,7 @@ import logoImage from "@/assets/Volts_lg.png";
 import logoName from "@/assets/Volts_lg_name.png";
 import { Link, useNavigate } from "react-router-dom";
 import { GenderOptions } from "@/models/constants";
-import { ArrowLeft, CornerDownLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRegister } from "../../hooks/useRegister";
 import axios from "axios";
 import type { RegisterRequest } from "../../models/auth";
@@ -55,7 +55,7 @@ export function SignUp() {
   });
 
   const navigate = useNavigate();
-  const { mutate: registerMutate, error, isError, isPending } = useRegister();
+  const { mutate: registerMutate, isPending } = useRegister();
 
   const onSubmit = async (data: SignupFormData) => {
     const registerData: RegisterRequest = {

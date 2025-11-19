@@ -15,18 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
+import { Form } from "../ui/form";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Plus } from "lucide-react";
 import type { PositionDto } from "../../models/position";
 import { useCreateShift } from "../../hooks/useShifts";
@@ -35,7 +25,6 @@ import { addHours, toHtmlDatetimeLocal } from "../../utils";
 import { ShiftBasicInfoFields } from "./CreateShiftDialog/ShiftBasicInfoFields";
 import { ShiftPositionsEditor } from "./CreateShiftDialog/ShiftPositionsEditor";
 import { ShiftDateFields } from "./CreateShiftDialog/ShiftDateFields";
-import type { ShiftCompleteViewDto } from "../../models/shiftCompleteView";
 
 const createShiftSchema = z.object({
   title: z.string().max(100, "Título muito longo"),

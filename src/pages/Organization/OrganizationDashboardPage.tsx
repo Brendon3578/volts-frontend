@@ -15,14 +15,11 @@ import { Input } from "../../components/ui/input";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Search, Users, TriangleAlert, Building2 } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { EnterOrganizationCard } from "../../components/layout/organization/EnterOrganizationCard";
 import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
 import { Separator } from "../../components/ui/separator";
-import { Badge } from "../../components/ui/badge";
 import { CreateOrganizationDialog } from "../../components/layout/organization/CreateOrganizationDialog";
 import { UserOrganizationCard } from "../../components/layout/organization/UserOrganizationCard";
-import { GroupList } from "../../components/groups/GroupList";
 import {
   useUserOrganizations,
   useAvailableOrganizations,
@@ -50,7 +47,6 @@ export function OrganizationDashboardPage() {
     isError,
   } = useAvailableOrganizations();
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
 
   const { state } = useAuth();
   const user = state.user;
