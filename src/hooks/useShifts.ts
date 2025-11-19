@@ -68,7 +68,6 @@ export const useUpdateShift = () => {
     mutationFn: ({
       id,
       payload,
-      groupId,
     }: {
       id: string;
       payload: UpdateShiftDto;

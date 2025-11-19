@@ -45,7 +45,6 @@ export const useApplyToShiftPosition = () => {
     mutationFn: ({
       shiftPositionId,
       payload,
-      shiftId,
     }: {
       shiftPositionId: string;
       payload: CreateShiftPositionAssignmentDto;
@@ -75,7 +74,7 @@ export const useConfirmAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+    mutationFn: ({ id }: { id: string; shiftId?: string }) =>
       confirmAssignment(id),
     onSuccess: (assignment, variables) => {
       queryClient.invalidateQueries({
@@ -100,7 +99,7 @@ export const useCancelAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+    mutationFn: ({ id }: { id: string; shiftId?: string }) =>
       cancelAssignment(id),
     onSuccess: (assignment, variables) => {
       queryClient.invalidateQueries({
@@ -125,7 +124,7 @@ export const useDeleteAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, shiftId }: { id: string; shiftId?: string }) =>
+    mutationFn: ({ id }: { id: string; shiftId?: string }) =>
       deleteAssignment(id),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["assignment", variables.id] });
