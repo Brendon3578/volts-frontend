@@ -3,7 +3,7 @@ import { useAuth } from "../context/Auth/useAuth";
 
 export function ProtectedRoute() {
   const { state } = useAuth();
-  console.log(state); // validar isso depois
+  // console.log(state); // validar isso depois
   if (state.isLoading == false && !state.isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

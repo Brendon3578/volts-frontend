@@ -58,7 +58,7 @@ export const useApplyToShiftPosition = () => {
         queryKey: ["assignment", assignment.id],
       });
       if (variables.shiftId) {
-        console.log("tem que invalidar");
+        // console.log("tem que invalidar");
         queryClient.invalidateQueries({
           queryKey: ["shift-complete-view", variables.shiftId],
         });

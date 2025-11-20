@@ -101,7 +101,7 @@ export function GroupSettings() {
 
   const onSubmit = async (data: UpdateGroupDto) => {
     if (!id) return;
-    console.log(data);
+    // console.log(data);
     try {
       await updateGroup({ id, payload: data });
 
@@ -109,7 +109,7 @@ export function GroupSettings() {
 
       toast.success("Configurações do grupo salvo com sucesso.");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       // Error handling is done in the parent component/hook
     }
   };
@@ -126,7 +126,7 @@ export function GroupSettings() {
     }
   }
 
-  console.log("renderizou");
+  // console.log("renderizou");
 
   const selectedIconId = useWatch({ control: form.control, name: "icon" });
 

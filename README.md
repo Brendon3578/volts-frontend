@@ -4,6 +4,8 @@ Uma aplicação feita com React + Vite para gerenciar grupos voluntários, escal
 
 Desenvolvida com TypeScript, Tailwind CSS e shadcn/ui.
 
+- [Arquitetura Principal da Aplicação](./architecture.md)
+
 ## Integrantes
 
 - Adriano Barros

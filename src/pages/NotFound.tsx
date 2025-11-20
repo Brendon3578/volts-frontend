@@ -1,8 +1,13 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useAuth } from "../context/Auth/useAuth";
+import { Button } from "../components/ui/button";
 
 export function NotFound() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { state } = useAuth();
+  const user = state.user;
 
   useEffect(() => {
     console.error(
@@ -18,9 +23,16 @@ export function NotFound() {
         <p className="mb-4 text-xl text-gray-600">
           Oops! Página não encontrada
         </p>
-        <a href="/" className="text-blue-500 underline hover:text-blue-700">
-          Voltar para a página inicial
-        </a>
+        <div className="flex flex-col gap-8">
+          {user && (
+            <Button onClick={() => navigate(`/dashboard`)} className="mt-4">
+              Voltar para o Dashboard
+            </Button>
+          )}
+          <a href="/" className="text-blue-500 underline hover:text-blue-700">
+            Voltar para a página inicial
+          </a>
+        </div>
       </div>
     </div>
   );

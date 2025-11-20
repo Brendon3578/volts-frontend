@@ -7,7 +7,7 @@ interface GroupTitleProps {
 }
 
 export const GroupTitle = memo(function GroupTitle({ group }: GroupTitleProps) {
-  console.log(group);
+  // console.log(group);
   return (
     <div className="flex mb-6">
       <GroupIconContainer color={group.color} groupIconId={group.icon} />

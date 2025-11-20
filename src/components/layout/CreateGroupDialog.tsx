@@ -63,7 +63,6 @@ export function CreateGroupDialog({
 
   const onSubmit = async (data: CreateGroupDto) => {
     try {
-      console.log(data);
       const result = await createGroup(data);
       if (result) {
         form.reset();
@@ -73,7 +72,6 @@ export function CreateGroupDialog({
       }
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error);
         if (error.status == 403) {
           toast.error("Você não tem permissão para criar um grupo");
         }

@@ -31,8 +31,6 @@ export const getGroupsCompleteViewByOrganizationId = async (
     `/Organizations/${organizationId}/Groups/completeView`
   );
 
-  console.log(response);
-
   return response.data;
 };
 

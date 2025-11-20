@@ -78,8 +78,6 @@ export const EditShiftDialog = memo(function EditShiftDialog({
     },
   });
 
-  console.log(form.getValues());
-
   const onSubmit = async (data: CreateShiftDto) => {
     try {
       if (!canUpdate) return;

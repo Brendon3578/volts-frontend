@@ -63,7 +63,7 @@ export function CreateOrganizationDialog({
         navigate(`/organizations/${newOrganization.id}`);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error("Houve um erro ao criar a organização!");
       // Error handling is done in the parent component/hook
     }

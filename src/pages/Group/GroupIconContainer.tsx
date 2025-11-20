@@ -48,7 +48,7 @@ export const GroupIconContainer = memo(function GroupIconContainer({
 
   const finalIconClassName = cn(iconClassName, textColorClass);
 
-  console.log("groupiconcontainer");
+  // console.log("groupiconcontainer");
 
   return (
     <div className={cn(containerClassName)} style={backgroundStyle}>

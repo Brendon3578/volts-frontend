@@ -36,21 +36,21 @@ export function SignUp() {
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      //fullName: "",
-      //email: "",
-      //birthDate: "",
-      //gender: undefined,
-      //password: "",
-      //confirmPassword: "",
-      //termsAccepted: false,
+      fullName: "",
+      email: "",
+      birthDate: "",
+      gender: undefined,
+      password: "",
+      confirmPassword: "",
+      termsAccepted: false,
 
-      fullName: "Brendon Gomes",
-      email: "teste@teste.com",
-      birthDate: "2010-10-10",
-      gender: "male",
-      password: "1234567", // placeholder password ignore it
-      confirmPassword: "1234567",
-      termsAccepted: true,
+      // fullName: "Brendon Gomes",
+      // email: "teste@teste.com",
+      // birthDate: "2010-10-10",
+      // gender: "male",
+      // password: "1234567", // placeholder password ignore it
+      // confirmPassword: "1234567",
+      // termsAccepted: true,
     },
   });
 
@@ -77,7 +77,7 @@ export function SignUp() {
         let errorMessage = "";
         if (axios.isAxiosError(error)) {
           const errorData = error.response?.data;
-          console.log(errorData);
+          // console.log(errorData);
           if (errorData.message) {
             errorMessage = errorData.message;
           }
