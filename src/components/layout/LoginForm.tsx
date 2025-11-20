@@ -48,7 +48,7 @@ export function LoginForm() {
       },
       onError: (error) => {
         toast.error("Falha ao fazer login. E-mail ou senha incorretos!");
-        // console.log(error);
+        console.log(error);
         //console.error("Erro de login:", error);
       },
     });
