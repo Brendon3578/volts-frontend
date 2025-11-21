@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 // Definindo a URL base da API
 const API_URL = import.meta.env.VITE_API_URL
@@ -33,6 +34,13 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (axios.isAxiosError(error)) {
+      if (error.code == "ERR_NETWORK") {
+        setTimeout(() => {
+          toast.error("Falha de conexão com o servidor!");
+        }, 1000);
+      }
+    }
     // Tratamento de erros específicos (ex: 401 Unauthorized)
     if (error.response && error.response.status === 401) {
       // Limpar dados de autenticação e redirecionar para login

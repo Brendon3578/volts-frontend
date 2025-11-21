@@ -160,7 +160,7 @@ export function GroupDetails() {
           <div className="flex-1">
             <GroupTitle group={group} />
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">
+              <Badge>
                 <CalendarClock className="mr-1 h-3 w-3" />
                 {group.upcomingShiftsCount || 0} próximas escalas
               </Badge>

@@ -26,11 +26,15 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
+  Repeat2,
+  FileX,
+  FileUser,
+  File,
 } from "lucide-react";
 import { format } from "date-fns";
-import type { VolunteerStatusType } from "../models";
+import type { ShiftStatusType, VolunteerStatusType } from "../models";
 import { ShiftStatus, VolunteerStatus } from "../models";
-import { useShiftCompleteView } from "../hooks/useShifts";
+import { useShiftCompleteView, useUpdateShiftStatus } from "../hooks/useShifts";
 import { useGroup } from "../hooks/useGroups";
 import {
   useCancelAssignment,
@@ -47,6 +51,18 @@ import { EditShiftDialog } from "./../components/layout/EditShiftDialog";
 import { usePositionsByGroupId } from "../hooks/usePositions";
 import { WithPermission } from "./../components/common/WithPermission";
 import { useAuth } from "../context/Auth/useAuth";
+import type { ShiftDto, UpdateShiftStatusDto } from "../models/shift";
+import { cn } from "../lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import { useState } from "react";
 
 const getStatusIcon = (status: VolunteerStatusType) => {
   switch (status) {
@@ -76,6 +92,7 @@ export function ShiftDetail() {
   const {
     data: shift,
     isLoading,
+    refetch: refetchShift,
     // signupForShift,
     // cancelSignup,
     // updateVolunteerStatus,
@@ -231,21 +248,13 @@ export function ShiftDetail() {
                 </p>
               )}
               <div className="flex flex-wrap gap-2 mb-4">
-                <Badge
-                  variant={
-                    shift.status === ShiftStatus.OPEN
-                      ? "default"
-                      : shift.status === ShiftStatus.FILLED
-                      ? "secondary"
-                      : "destructive"
-                  }
-                >
-                  {shift.status === ShiftStatus.OPEN
-                    ? "Aberto"
-                    : shift.status === ShiftStatus.FILLED
-                    ? "Preenchido"
-                    : "Cancelado"}
-                </Badge>
+                <ShiftStatusBadge
+                  isLeaderOrAdmin={isUserAdminOrLeader}
+                  shift={shift}
+                  refetchShift={async () => {
+                    await refetchShift();
+                  }}
+                />
                 {isPast && (
                   <Badge variant="outline">
                     Finalizado - Já ocorreu a escala
@@ -382,7 +391,14 @@ export function ShiftDetail() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Shift Info */}
-            <Card className="card-elevated">
+            <Card
+              className={cn(
+                "card-elevated",
+                shift.status == ShiftStatus.OPEN && "border-primary",
+                shift.status == ShiftStatus.FILLED && "border-secondary",
+                shift.status == ShiftStatus.CANCELLED && "border-red-500"
+              )}
+            >
               <CardHeader>
                 <CardTitle className="text-base">
                   Informações da Escala
@@ -609,5 +625,86 @@ function ShiftAssignmentVolunteerRow({
           )}
       </div>
     </div>
+  );
+}
+
+type ShiftStatusBadgeProps = {
+  isLeaderOrAdmin: boolean;
+  shift: ShiftDto;
+  refetchShift: () => Promise<void>;
+};
+
+function ShiftStatusBadge({ isLeaderOrAdmin, shift }: ShiftStatusBadgeProps) {
+  const [status, setStatus] = useState<string>(shift.status);
+  const { mutateAsync: updateShiftStatus, isPending } = useUpdateShiftStatus();
+
+  const setNewShiftStatus = async (newStatus: string) => {
+    const updateStatusDto: UpdateShiftStatusDto = {
+      newStatus: newStatus,
+    };
+
+    await updateShiftStatus({
+      id: shift.id,
+      groupId: shift.groupId,
+      payload: updateStatusDto,
+    });
+    setStatus(newStatus);
+    toast.success("Status da escala mudado com sucesso");
+  };
+
+  const badgeVariant =
+    status === ShiftStatus.OPEN
+      ? "default"
+      : status === ShiftStatus.FILLED
+      ? "secondary"
+      : "destructive";
+
+  const statusText =
+    status === ShiftStatus.OPEN
+      ? "Aberto para inscrições"
+      : status === ShiftStatus.FILLED
+      ? "Totalmente preenchido"
+      : "Escala cancelada";
+
+  if (isLeaderOrAdmin == false) {
+    return (
+      <Badge className={"px-4 py-1"} variant={badgeVariant}>
+        {statusText}
+      </Badge>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          className="px-4 py-1 h-auto text-xs cursor-pointer"
+          variant={badgeVariant}
+        >
+          {statusText}
+          <span>
+            <Repeat2 className="inline-block w-4 h-4" />
+          </span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Mudar o status da escala</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup
+          value={status}
+          onValueChange={setNewShiftStatus}
+        >
+          <DropdownMenuRadioItem value={ShiftStatus.OPEN}>
+            <File /> Aberto
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value={ShiftStatus.FILLED}>
+            <FileUser /> Preenchido
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value={ShiftStatus.CANCELLED}>
+            <FileX /> Cancelado
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

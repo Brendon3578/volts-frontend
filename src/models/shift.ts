@@ -43,6 +43,10 @@ export interface UpdateShiftDto {
   endDate?: string;
   title?: string;
   notes?: string;
-  status?: ShiftStatusType;
+  // status?: ShiftStatusType;
   positions?: CreateShiftPositionDto[];
+}
+
+export interface UpdateShiftStatusDto {
+  newStatus: string;
 }

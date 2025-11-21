@@ -10,6 +10,7 @@
     - [📝 React Hook Form + Zod](#-react-hook-form--zod)
     - [🌐 Roteamento](#-roteamento)
     - [⚙️ Build](#️-build)
+    - [Segurança](#segurança)
   - [⚙️ Backend – Tecnologias e Arquitetura](#️-backend--tecnologias-e-arquitetura)
     - [🧩 C# .NET 8 Web API](#-c-net-8-web-api)
     - [🗄️ Entity Framework Core (Com o driver do postgres Npgsql)](#️-entity-framework-core-com-o-driver-do-postgres-npgsql)
@@ -46,6 +47,21 @@ A solução é composta por:
 - **Deploy do Frontend** na plataforma Vercel
 
 Toda a comunicação entre as camadas ocorre via API REST, garantindo desacoplamento, escalabilidade e manutenção simplificada.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Browser as Frontend (React/Vite)
+    participant API as Backend (.NET Web API)
+    participant DB as PostgreSQL (Supabase)
+
+    User->>Browser: Acessa o site (Vercel)
+    Browser->>API: Requisição HTTP
+    API->>DB: Consulta/Atualiza dados
+    DB-->>API: Retorna dados
+    API-->>Browser: Resposta JSON
+    Browser-->>User: Exibe informações na interface
+```
 
 ---
 
@@ -118,6 +134,24 @@ Validação tipada com schemas compartilhados entre UI e Backend:
 
 - Deploy contínuo pelo Vercel a partir da branch principal
 
+### Segurança
+
+- Autorização -> Acesso de login feito através de JWT (Json Web Token)
+
+```mermaid
+sequenceDiagram
+    participant FE as Frontend
+    participant API as API .NET
+    participant DB as PostgreSQL
+
+    FE->>API: POST /auth/login (email + senha)
+    API->>DB: Verifica credenciais
+    DB-->>API: Retorna usuário válido
+    API-->>FE: JWT (Token de acesso)
+    FE->>API: Requisição protegida com Bearer Token
+    API-->>FE: Dados autorizados
+```
+
 ---
 
 ## ⚙️ Backend – Tecnologias e Arquitetura
@@ -179,6 +213,28 @@ Para funcionar no Render, foi adotado o **Session Pooler** (IPv4), recomendado p
 ---
 
 ## 🌩️ Infraestrutura em Nuvem
+
+<small>Diagrama de como a infraestrutura da nuvem foi implementada</small>
+
+```mermaid
+flowchart LR
+    subgraph Vercel
+        FE[Frontend React/Vite]
+    end
+
+    subgraph Render
+        BE[.NET Web API - Docker]
+    end
+
+    subgraph Supabase
+        PG[(PostgreSQL)]
+    end
+
+    User((Usuário)) --> FE
+    FE --> BE
+    BE --> PG
+
+```
 
 ## Backend – Render
 

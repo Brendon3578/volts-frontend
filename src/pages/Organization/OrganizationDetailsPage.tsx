@@ -77,6 +77,7 @@ export function OrganizationDetailsPage() {
 
       refetchOrganization();
       refetchGroups();
+      navigate(`/organizations`);
     } catch {
       toast.error("Falha ao sair da organização");
     }

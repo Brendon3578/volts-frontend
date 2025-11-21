@@ -6,8 +6,13 @@ import {
   getShiftsByGroupId,
   updateShift,
   getShiftCompleteView,
+  updateShiftStatus,
 } from "../api/endpoints";
-import type { CreateShiftDto, UpdateShiftDto } from "../models/shift";
+import type {
+  CreateShiftDto,
+  UpdateShiftDto,
+  UpdateShiftStatusDto,
+} from "../models/shift";
 import { DEFAULT_REACT_QUERY_STALE_TIME } from "../utils";
 
 /**
@@ -73,6 +78,33 @@ export const useUpdateShift = () => {
       payload: UpdateShiftDto;
       groupId?: string;
     }) => updateShift(id, payload),
+    onSuccess: (_, { id, groupId }) => {
+      queryClient.invalidateQueries({ queryKey: ["shift", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["shift-complete-view", id],
+      });
+      if (groupId) {
+        queryClient.invalidateQueries({ queryKey: ["shifts", groupId] });
+      }
+    },
+  });
+};
+
+/**
+ * Atualiza o status do turno
+ */
+export const useUpdateShiftStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateShiftStatusDto;
+      groupId?: string;
+    }) => updateShiftStatus(id, payload),
     onSuccess: (_, { id, groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["shift", id] });
       queryClient.invalidateQueries({

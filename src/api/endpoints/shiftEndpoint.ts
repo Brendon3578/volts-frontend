@@ -2,6 +2,7 @@ import type {
   CreateShiftDto,
   UpdateShiftDto,
   ShiftDto,
+  UpdateShiftStatusDto,
 } from "../../models/shift";
 import api from "../client";
 
@@ -54,4 +55,15 @@ export const updateShift = async (
  */
 export const deleteShift = async (id: string): Promise<void> => {
   await api.delete(`/Shifts/${id}`);
+};
+
+/**
+ * PUT /api/Shifts/{id}/change-status
+ * Atualiza o status do turno
+ */
+export const updateShiftStatus = async (
+  id: string,
+  payload: UpdateShiftStatusDto
+): Promise<void> => {
+  await api.put(`/Shifts/${id}/change-status`, payload);
 };

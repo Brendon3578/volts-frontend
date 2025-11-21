@@ -127,6 +127,7 @@ export function LoginForm() {
               onClick={() =>
                 toast.warning("Conexão com o Google não realizada")
               }
+              disabled
             >
               <img src={googleIcon} alt="Ícone do google" className="size-4" />
               Entrar com o Google
