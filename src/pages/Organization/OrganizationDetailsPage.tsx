@@ -131,7 +131,9 @@ export function OrganizationDetailsPage() {
     return (
       <div className="flex  items-center justify-center py-[10vh]">
         <div className="text-center">
-          <h1 className="mb-4 text-8xl font-bold">404</h1>
+          <h1 className="mb-4 text-8xl font-bold font-poppins text-neutral-800">
+            404
+          </h1>
           <p className="mb-4 text-xl text-gray-600">
             Organização não encontrada!
           </p>
@@ -168,10 +170,10 @@ export function OrganizationDetailsPage() {
 
           <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h2 className="text-4xl font-bold text-foreground">
+              <h2 className="text-4xl font-bold text-foreground font-poppins">
                 {organization.name}
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground font-poppins">
                 {organization.description}
               </p>
             </div>
@@ -243,7 +245,9 @@ export function OrganizationDetailsPage() {
       <section className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">Grupos</h2>
+            <h2 className="text-3xl font-bold text-foreground font-poppins">
+              Grupos
+            </h2>
             <p className="text-muted-foreground">
               Explore e participe dos grupos disponíveis
             </p>

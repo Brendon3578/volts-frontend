@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../../../context/Auth/useAuth";
+import VoltsLogo from "@/assets/Volts_lg.svg";
+import VoltsName from "@/assets/Volts_lg_name.svg";
 
 type SidebarProps = {
   sidebarItems: SidebarLink[];
@@ -40,7 +42,10 @@ export function Sidebar({ sidebarItems }: SidebarProps) {
         )}
       >
         {!collapsed && (
-          <h2 className="text-2xl font-bold text-gray-900">Volts</h2>
+          <div className="flex items-center gap-2">
+            <img src={VoltsLogo} className="size-10" />
+            <img src={VoltsName} className="h-6" />
+          </div>
         )}
         <Button
           variant="outline"

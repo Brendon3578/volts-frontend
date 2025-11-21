@@ -59,7 +59,7 @@ export function DashboardLayout() {
               <div className="p-1.5 bg-primary rounded-md">
                 <currentPage.Icon className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-2xl font-semibold text-gray-800">
+              <h1 className="text-2xl font-semibold text-gray-800 font-poppins">
                 {currentPage.title}
               </h1>
             </div>

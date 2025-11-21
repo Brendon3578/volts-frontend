@@ -239,11 +239,11 @@ export function ShiftDetail() {
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl font-bold text-foreground mb-2 font-poppins">
                 {shift.title || "Escala"}
               </h1>
               {group && (
-                <p className="text-muted-foreground text-lg mb-4">
+                <p className="text-muted-foreground text-lg mb-4 font-poppins">
                   {group.name}
                 </p>
               )}

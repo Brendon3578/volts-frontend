@@ -44,9 +44,11 @@ import { isUserOrganizationAdmin, isUserOrganizationLeader } from "../../utils";
 export function GroupDetails() {
   const { id: groupId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: group, isLoading: groupLoading } = useGroupCompleteView(
-    groupId!
-  );
+  const {
+    data: group,
+    isLoading: groupLoading,
+    isError: isGroupError,
+  } = useGroupCompleteView(groupId!);
   const { data: shifts, isLoading: shiftsLoading } = useShiftsByGroupId(
     groupId!
   );
@@ -75,11 +77,12 @@ export function GroupDetails() {
     isUserOrganizationLeader(userRole?.role);
 
   if (
-    groupLoading ||
-    positionsLoading ||
-    shiftsLoading ||
-    roleLoading ||
-    !userRole
+    (groupLoading ||
+      positionsLoading ||
+      shiftsLoading ||
+      roleLoading ||
+      !userRole) &&
+    !isGroupError
   ) {
     return (
       <div className="min-h-screen bg-background">
@@ -124,12 +127,14 @@ export function GroupDetails() {
     );
   }
 
-  if (!group) {
+  if (!group || isGroupError) {
     return (
       <div className="w-full bg-background flex items-center justify-center">
         <Card className="max-w-md">
           <CardContent className="text-center py-8">
-            <h2 className="text-xl font-semibold mb-2">Grupo não encontrado</h2>
+            <h2 className="text-2xl font-bold mb-2 font-poppins">
+              Grupo não encontrado
+            </h2>
             <p className="text-muted-foreground mb-4">
               O grupo que você está procurando não existe ou foi removido.
             </p>
@@ -196,7 +201,9 @@ export function GroupDetails() {
 
             <TabsContent value="shifts" className="space-y-6">
               <div className="flex items-start justify-between">
-                <h2 className="text-xl font-semibold">Escalas do Grupo</h2>
+                <h2 className="text-2xl font-semibold font-poppins">
+                  Escalas do Grupo
+                </h2>
                 {isUserAdminOrLeader &&
                   !positionsLoading &&
                   positions &&
@@ -219,7 +226,7 @@ export function GroupDetails() {
                 <div className="space-y-6">
                   {upcomingShifts && upcomingShifts.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-medium mb-4 text-primary">
+                      <h3 className="text-lg font-medium mb-4 text-primary font-poppins">
                         Próximas Escalas
                       </h3>
                       <div className="space-y-4">
@@ -232,7 +239,7 @@ export function GroupDetails() {
 
                   {pastShifts && pastShifts.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-medium mb-4 text-muted-foreground">
+                      <h3 className="text-lg font-medium mb-4 text-muted-foreground font-poppins">
                         Escalas Anteriores
                       </h3>
                       <div className="space-y-4">
@@ -278,7 +285,9 @@ export function GroupDetails() {
 
             <TabsContent value="positions" className="space-y-6">
               <div className="flex items-start justify-between">
-                <h2 className="text-xl font-semibold">Posições do Grupo</h2>
+                <h2 className="text-2xl font-semibold font-poppins">
+                  Posições do Grupo
+                </h2>
                 <WithPermission can={isUserAdminOrLeader}>
                   <PositionFormDialog // refazer
                     group={group}

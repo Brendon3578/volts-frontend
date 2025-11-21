@@ -106,7 +106,7 @@ export function OrganizationDashboardPage() {
         </Button> */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2 font-poppins">
               Organizações
             </h1>
             <p className="text-muted-foreground">
@@ -125,7 +125,9 @@ export function OrganizationDashboardPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold">Minhas Organizações</h2>
+          <h2 className="text-xl font-semibold font-poppins">
+            Minhas Organizações
+          </h2>
           {userOrgs.isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2].map((i) => (
@@ -158,7 +160,9 @@ export function OrganizationDashboardPage() {
       {/* Seção de Organizações Disponíveis */}
       <section className="flex flex-col gap-4">
         <div>
-          <h2 className="text-xl font-semibold">Organizações Disponíveis</h2>
+          <h2 className="text-xl font-semibold font-poppins">
+            Organizações Disponíveis
+          </h2>
         </div>
 
         {/* Search and Filters */}

@@ -6,7 +6,7 @@ export const createOrganizationSchema = z.object({
   //color: z.string().optional(),
   //imageUrl: z.url("URL Inválida").optional(),
   //icon: z.string().optional(),
-  email: z.email("Email inválido").optional(),
+  email: z.email("Email inválido").optional().or(z.literal("")),
   phone: z.string().max(32, "Telefone muito longo").optional(),
   address: z.string().max(256, "Endereço muito longo").optional(),
 });
