@@ -4,3 +4,4 @@ export * from "./positionsEndpoint";
 export * from "./shiftEndpoint";
 export * from "./shiftCompleteViewEndpoint";
 export * from "./shiftPositionAssignmentEndpoint";
+export * from "./userEndpoint";

@@ -28,7 +28,7 @@ const sidebarItems: SidebarLink[] = [
   // },
   {
     title: "Configurações",
-    href: "/settings",
+    href: "/me/profile",
     icon: Settings,
   },
 ];

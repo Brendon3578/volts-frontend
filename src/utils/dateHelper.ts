@@ -2,6 +2,7 @@ import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
+  format,
 } from "date-fns";
 
 export function calculateShiftDuration(start: Date, end: Date) {
@@ -53,3 +54,12 @@ export function addHours(hours: number, date: Date = new Date()): Date {
   result.setHours(result.getHours() + hours);
   return result;
 }
+
+export const formatCompleteDate = (date: Date) => {
+  return format(date, "dd/MM/yyyy HH:mm");
+};
+
+export const formatToSimpleDateOnly = (date: string) => {
+  const result = new Date(date);
+  return format(result, "yyyy-MM-dd");
+};

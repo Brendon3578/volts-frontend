@@ -31,8 +31,7 @@ import {
   FileUser,
   File,
 } from "lucide-react";
-import { format } from "date-fns";
-import type { ShiftStatusType, VolunteerStatusType } from "../models";
+import type { VolunteerStatusType } from "../models";
 import { ShiftStatus, VolunteerStatus } from "../models";
 import { useShiftCompleteView, useUpdateShiftStatus } from "../hooks/useShifts";
 import { useGroup } from "../hooks/useGroups";
@@ -41,7 +40,7 @@ import {
   useConfirmAssignment,
 } from "../hooks/useShiftPositionAssignment";
 import type { ShiftVolunteerDto } from "../models/shiftCompleteView";
-import { formatShiftDuration } from "../utils";
+import { formatCompleteDate, formatShiftDuration } from "../utils";
 import { toast } from "sonner";
 import { ConfirmActionDialog } from "../components/common/ConfirmActionDialog";
 import { useDeleteShift } from "../hooks/useShifts";
@@ -122,6 +121,7 @@ export function ShiftDetail() {
       confirmAssignment({ id: shiftPosition.id, shiftId });
       toast.success("Check-in feito, inscrição confirmada!");
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao fazer Check-in, confirmar inscrição");
     }
   }
@@ -134,6 +134,7 @@ export function ShiftDetail() {
       cancelAssignment({ id: shiftPosition.id, shiftId: shiftId });
       toast.success("Inscrição cancelada!");
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao  cancelar inscrição");
     }
   }
@@ -202,10 +203,6 @@ export function ShiftDetail() {
       </div>
     );
   }
-
-  const formatCompleteDate = (date: Date) => {
-    return format(date, "dd/MM/yyyy HH:mm");
-  };
 
   const shiftStartDate = new Date(shift.startDate);
   const shiftEndDate = new Date(shift.endDate);
@@ -636,7 +633,7 @@ type ShiftStatusBadgeProps = {
 
 function ShiftStatusBadge({ isLeaderOrAdmin, shift }: ShiftStatusBadgeProps) {
   const [status, setStatus] = useState<string>(shift.status);
-  const { mutateAsync: updateShiftStatus, isPending } = useUpdateShiftStatus();
+  const { mutateAsync: updateShiftStatus } = useUpdateShiftStatus();
 
   const setNewShiftStatus = async (newStatus: string) => {
     const updateStatusDto: UpdateShiftStatusDto = {

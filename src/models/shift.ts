@@ -1,7 +1,3 @@
-// models/shift.ts
-
-import type { ShiftStatusType } from "./types";
-
 export interface ShiftPositionDto {
   id: string;
   positionId: string;

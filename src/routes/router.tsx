@@ -11,6 +11,7 @@ import { DashboardLayout } from "./DashboardLayout";
 import { OrganizationDashboardPage } from "../pages/Organization/OrganizationDashboardPage";
 import { OrganizationDetailsPage } from "../pages/Organization/OrganizationDetailsPage";
 import { OrganizationSettingsPage } from "../pages/Organization/OrganizationSettingsPage";
+import { ProfilePage } from "../pages/Me/ProfilePage";
 
 export const router = createBrowserRouter([
   // Rotas públicas (sem layout)
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
           {
             path: "/shifts/:id",
             element: <ShiftDetail />,
+          },
+          {
+            path: "/me/profile",
+            element: <ProfilePage />,
           },
         ],
       },

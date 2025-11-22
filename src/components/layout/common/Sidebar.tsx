@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, LogOut, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
 import type { SidebarLink } from "../../../types/layout";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useAuth } from "../../../context/Auth/useAuth";
 import VoltsLogo from "@/assets/Volts_lg.svg";
 import VoltsName from "@/assets/Volts_lg_name.svg";
+import { UserIcon } from "./UserIcon";
 
 type SidebarProps = {
   sidebarItems: SidebarLink[];
@@ -74,7 +75,7 @@ export function Sidebar({ sidebarItems }: SidebarProps) {
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
               location.pathname === item.href
-                ? "bg-blue-100 text-blue-700"
+                ? "bg-blue-100 text-blue-600"
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
               collapsed && "justify-center"
             )}
@@ -89,17 +90,17 @@ export function Sidebar({ sidebarItems }: SidebarProps) {
       <div className="p-4 border-t">
         {!collapsed && (
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <User className="h-4 w-4 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {state.user?.name || "Usuário"}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {state.user?.email || "email@example.com"}
-              </p>
-            </div>
+            <Link className="group flex gap-3 items-center" to="/me/profile">
+              <UserIcon userFullName={state.user?.name} />
+              <div className="flex-1 min-w-0 group-hover:underline">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {state.user?.name || "Usuário"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {state.user?.email || "email@example.com"}
+                </p>
+              </div>
+            </Link>
             {!collapsed && (
               <Button variant="outline" size={"sm"} onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
