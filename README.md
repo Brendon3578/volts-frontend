@@ -1,10 +1,4 @@
-# Sistema de Gerenciamento de Trabalho Voluntário
-
-Uma aplicação feita com React + Vite para gerenciar grupos voluntários, escalas e atividades.
-
-Desenvolvida com TypeScript, Tailwind CSS e shadcn/ui.
-
-- [Arquitetura Principal da Aplicação](./architecture.md)
+# Volts Frontend – Sistema de Gestão de Voluntários
 
 ## Integrantes
 
@@ -13,158 +7,238 @@ Desenvolvida com TypeScript, Tailwind CSS e shadcn/ui.
 - Elias Barbosa
 - Rafael Gonçalves
 
-## 🚀 Instalação
+## Projeto
 
-### 1. Configuração do Projeto
+O Volts é um sistema de gestão de voluntários utilizado por organizações para administrar equipes, grupos, posições e escalas de eventos.
+Este repositório contém o frontend, desenvolvido em React + TypeScript, responsável por fornecer uma interface moderna, rápida e intuitiva para administradores, líderes e voluntários.
 
-```bash
-# Clonar e navegar para o diretório
-npm create vite@latest volunteer-management -- --template react-ts
-cd volunteer-management
+Os usuários podem visualizar escalas, aplicar-se para posições, gerenciar grupos, editar informações da organização e atualizar seus perfis.
 
-# Instalar dependências principais
-npm install
+O frontend se integra diretamente ao backend .NET via API REST, consumindo endpoints protegidos por JWT.
 
-# Instalar dependências do projeto
-npm install react-hook-form zod @hookform/resolvers
-npm install @tanstack/react-query
-npm install react-router-dom
-npm install date-fns
-npm install lucide-react
+## ⚙️ Funcionalidades da Aplicação
+
+### 👤 Autenticação
+
+- Login com email e senha
+- Armazenamento e uso de token JWT
+- Redirecionamento por role e permissões
+- Estado global com React Query + persistência
+
+### 🏢 Organizações
+
+- Listagem das organizações das quais o usuário participa
+- Visualização de detalhes da organização
+- Gerenciamento de membros da organização (organization member)
+- Controle de permissões baseado no `OrganizationRoleEnum`:
+  - Admin
+  - Leader
+  - Member
+
+#### 🧩 Grupos (Groups)
+
+- Listagem de grupos da organização
+- Criação e edição de grupos
+- Visualização de posições e escalas do grupo
+- Responsável por agrupar as escalas (como uma sub-divisão)
+
+#### 🪪 Posições (Positions)
+
+- Criar, editar e excluir posições
+- Prevenção de remoção caso haja escalas associadas
+- Visualização de detalhes
+
+#### 🕒 Escalas (Shifts)
+
+- Criar, editar e visualizar escalas
+- Ver status: *open*, *filled*, *closed*
+- Visualizar posições necessárias e quantidade de vagas
+- Ver responsáveis e participantes
+
+#### Visualização completa da escala 📌 (Via endpoint de Shift Complete View)
+
+Interface completa de exibição de escala, trazendo:
+
+- Shift
+- Shift Positions
+- Voluntários inscritos na posição (Assignments)
+
+Incluindo:
+
+- Nome, email, status e notas do voluntário
+- Quantidade necessária vs preenchida
+- Status da posição
+
+#### ✋ Voluntariado / Inscrição
+
+- Usuário pode se aplicar para vagas
+- Pode cancelar inscrição
+- Pode visualizar seu status (pendente, aprovado etc.)
+
+#### 🎨 UI e Componentização
+
+- Sistema completo usando Shadcn UI
+- Tailwind CSS com linter e autocomplete
+- Skeletons para carregamento
+- Components reutilizáveis:
+  - Cards
+  - Badges
+  - Avatares
+  - Forms com React Hook Form + Validações em tempo real com Zod
+  - Layouts de navegação
+
+## 🧠 Modelo de Domínio (Frontend)
+
+As principais entidades do sistema se relacionam da seguinte forma:
+
+- **Organizações (Organizations)**: Entidade principal que representa uma instituição ou evento
+- **Grupos (Groups)**: Subdivisões dentro de uma organização, como departamentos ou equipes
+- **Escalas (Shifts)**: Períodos de trabalho com data, hora e local definidos
+- **Posições (Positions)**: Funções específicas que podem ser ocupadas por voluntários
+- **Inscrições (ShiftPositionAssignments)**: Registros de voluntários inscritos para trabalhar em posições específicas
+
+### Diagrama das tabelas da aplicação
+
+O diagrama abaixo representa as principais entidades do sistema Volts e seus relacionamentos.
+
+```mermaid
+erDiagram
+    User {
+        string Id PK
+        string Name
+        string Email
+        string Password
+    }
+    
+    Organization {
+        string Id PK
+        string Name
+        string Description
+    }
+    
+    OrganizationMember {
+        string Id PK
+        string UserId FK
+        string OrganizationId FK
+        enum Role
+        datetime JoinedAt
+        string InvitedById
+    }
+    
+    Group {
+        string Id PK
+        string Name
+        string Description
+        string OrganizationId FK
+    }
+    
+    Position {
+        string Id PK
+        string Name
+        string Description
+        string GroupId FK
+    }
+    
+    Shift {
+        string Id PK
+        string Name
+        string Description
+        string Location
+        datetime StartDateTime
+        datetime EndDateTime
+        string GroupId FK
+        enum Status
+    }
+    
+    ShiftPosition {
+        string Id PK
+        string ShiftId FK
+        string PositionId FK
+        int RequiredCount
+        int VolunteersCount
+    }
+    
+    ShiftPositionAssignment {
+        string Id PK
+        string UserId FK
+        string ShiftPositionId FK
+        enum Status
+        string Notes
+        datetime AppliedAt
+        datetime ConfirmedAt
+        datetime RejectedAt
+    }
+    
+    %% Relationships
+    User ||--o{ OrganizationMember : "pertence"
+    Organization ||--o{ OrganizationMember : "tem"
+    Organization ||--o{ Group : "tem"
+    Group ||--o{ Position : "tem"
+    Group ||--o{ Shift : "organiza"
+    Shift ||--o{ ShiftPosition : "tem"
+    Position ||--o{ ShiftPosition : "associada"
+    ShiftPosition ||--o{ ShiftPositionAssignment : "tem"
+    User ||--o{ ShiftPositionAssignment : "se inscreve"
 ```
 
-### 2. Configuração do shadcn/ui
+## 🧰 Tecnologias Utilizadas
 
-```bash
-# Inicializar shadcn/ui
-npx shadcn@latest init
+- React 18
+- TypeScript
+- Vite
+- React Router DOM
+- React Query
+- Axios
+- React Hook Form
+- Zod
+- Shadcn/ui
+- Tailwind CSS
+- Lucide Icons
 
-# Adicionar componentes necessários
-npx shadcn@latest add button
-npx shadcn@latest add card
-npx shadcn@latest add input
-npx shadcn@latest add textarea
-npx shadcn@latest add dialog
-npx shadcn@latest add form
-npx shadcn@latest add badge
-npx shadcn@latest add skeleton
-npx shadcn@latest add tabs
-npx shadcn@latest add toast
-npx shadcn@latest add toaster
-npx shadcn@latest add sonner
-```
-
-### 3. Scripts Disponíveis
-
-```bash
-# Desenvolvimento
-npm run dev
-
-# Build de produção
-npm run build
-
-# Preview da build
-npm run preview
-```
-
-## 🔄 Migração para API/Banco de Dados
-
-### 1. Trocar Adapter
-
-No arquivo `src/providers/DataProvider.tsx`:
-
-```typescript
-// Substituir LocalStorageAdapter por ApiAdapter
-import ApiAdapter from '../adapters/ApiAdapter';
-
-const adapter = new ApiAdapter('http://localhost:3001/api', authToken);
-```
-
-### 2. Endpoints da API Necessários
+## 📁 Estrutura Geral do Projeto
 
 ```txt
-GET    /api/dashboard/summary     # Estatísticas do dashboard
-GET    /api/groups                # Listar grupos
-POST   /api/groups                # Criar grupo
-GET    /api/groups/:id            # Detalhes do grupo
-PUT    /api/groups/:id            # Atualizar grupo
-DELETE /api/groups/:id            # Deletar grupo
-
-GET    /api/groups/:id/members    # Membros do grupo
-POST   /api/groups/:id/join       # Entrar no grupo
-POST   /api/groups/:id/leave      # Sair do grupo
-
-GET    /api/groups/:id/positions  # Posições do grupo
-POST   /api/positions             # Criar posição
-PUT    /api/positions/:id         # Atualizar posição
-DELETE /api/positions/:id         # Deletar posição
-
-GET    /api/groups/:id/shifts     # Escalas do grupo
-POST   /api/shifts               # Criar escala
-GET    /api/shifts/:id           # Detalhes da escala
-PUT    /api/shifts/:id           # Atualizar escala
-DELETE /api/shifts/:id           # Deletar escala
-
-POST   /api/shift-positions/:id/signup  # Inscrever-se
-POST   /api/shift-volunteers/:id/cancel # Cancelar inscrição
-GET    /api/my-signups                  # Minhas inscrições
+src/
+ ├── api/                ## Funções de requisições HTTP
+ ├── components/         ## Componentes reutilizáveis
+ ├── hooks/              ## Hooks com React Query
+ ├── layouts/            ## Layouts principais
+ ├── models/             ## Tipos e interfaces do domínio
+ ├── pages/              ## Páginas da aplicação
+ ├── routes/             ## Rotas da aplicação
+ ├── utils/              ## Funções utilitárias
+ ├── lib/                ## Configurações auxiliares
+ └── main.tsx            ## Código principal de entrada da aplicação
 ```
 
-### 3. Formato de Resposta da API
+## ▶️ Como Rodar o Projeto
 
-```json
-{
-  "success": true,
-  "data": { ... },
-  "message": "Mensagem opcional"
-}
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/seu-usuario/volts-frontend.git
+cd volts-frontend
+
+# 2. Instalar dependências
+
+npm install
+
+# 3. Configurar variáveis de ambiente
+
+# Criar arquivo .env.development contendo:
+
+VITE_API_URL=http://localhost:5000 ## url do backend
+
+# 4. Executar
+
+npm run dev
+# Aplicação ficará disponível em:
+
+http://localhost:5173
 ```
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Build e Deploy
 
-- **React 18** - Framework principal
-- **TypeScript** - Tipagem estática
-- **Vite** - Build tool
-- **Tailwind CSS** - Estilização
-- **shadcn/ui** - Componentes de UI
-- **React Hook Form** - Gerenciamento de formulários
-- **Zod** - Validação de schemas
-- **React Query** - Gerenciamento de estado servidor
-- **React Router** - Roteamento
-- **Lucide React** - Ícones
-
-## 📋 Funcionalidades
-
-### ✅ Implementadas
-
-- Dashboard com estatísticas
-- CRUD de grupos
-- CRUD de escalas/turnos
-- Sistema de posições
-- Inscrições em escalas
-- Interface responsiva
-- Validação de formulários
-- Persistência em localStorage
-
-### 🔄 Próximas Funcionalidades
-
-- [ ] Sistema de autenticação
-- [ ] Notificações
-- [ ] Relatórios e estatísticas avançadas
-- [ ] Sistema de permissões
-- [ ] Exportação de dados
-- [ ] Integração com calendário
-
-## 🎨 Design System
-
-O projeto utiliza um design system completo definido em `src/index.css` com:
-
-- Cores semânticas (oklch)
-- Tokens de design consistentes
-- Suporte a modo escuro
-- Gradientes e sombras
-- Animações suaves
-
-## 📄 Licença
-
-Este projeto está licenciado sob a MIT License.
+```bash
+npm run build
+npm run preview
+```
