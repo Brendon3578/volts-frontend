@@ -88,7 +88,9 @@ export const ShiftCard: React.FC<ShiftCardProps> = ({
 
   return (
     <Card
-      className={`card-elevated cursor-pointer ${isPast ? "opacity-75" : ""}`}
+      className={`card-elevated cursor-pointer ${
+        isPast ? "opacity-75 hover:opacity-100" : ""
+      }`}
       onClick={handleViewDetails}
     >
       <CardHeader className="pb-3">

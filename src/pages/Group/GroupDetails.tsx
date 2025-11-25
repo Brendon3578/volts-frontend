@@ -40,6 +40,7 @@ import { useMemo } from "react";
 import { WithPermission } from "./../../components/common/WithPermission";
 import { useSelfOrganizationRole } from "../../hooks/useOrganizations";
 import { isUserOrganizationAdmin, isUserOrganizationLeader } from "../../utils";
+import { CalendarTab } from "../../components/layout/CalendarTab";
 
 export function GroupDetails() {
   const { id: groupId } = useParams<{ id: string }>();
@@ -190,13 +191,14 @@ export function GroupDetails() {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-9 gap-6">
         {/* Main Content */}
-        <main className="lg:col-span-5">
+        <main className="xl:col-span-7">
           <Tabs defaultValue="shifts" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-2 *:cursor-pointer">
+            <TabsList className="grid w-full grid-cols-3 mb-2 *:cursor-pointer">
               <TabsTrigger value="shifts">Escalas</TabsTrigger>
               <TabsTrigger value="positions">Posições</TabsTrigger>
+              <TabsTrigger value="calendar">Calendário</TabsTrigger>
             </TabsList>
 
             <TabsContent value="shifts" className="space-y-6">
@@ -301,11 +303,20 @@ export function GroupDetails() {
                 isUserAdminOrLeader={isUserAdminOrLeader}
               />
             </TabsContent>
+
+            <TabsContent value="calendar" className="space-y-6">
+              <div className="flex items-start justify-between">
+                <h2 className="text-2xl font-semibold font-poppins">
+                  Calendário
+                </h2>
+              </div>
+              <CalendarTab groupId={group.id} />
+            </TabsContent>
           </Tabs>
         </main>
 
         {/* Sidebar */}
-        <section className="lg:col-span-2 space-y-6">
+        <section className="xl:col-span-2 space-y-6 w-full">
           {/* Group Stats */}
           <Card className="card-elevated">
             <CardHeader>
