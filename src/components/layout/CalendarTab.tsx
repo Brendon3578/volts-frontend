@@ -8,7 +8,7 @@ import {
 } from "../../hooks/useShifts";
 import type { ShiftDto } from "../../models/shift";
 import { format } from "date-fns";
-import { Calendar, Clock, Users } from "lucide-react";
+import { Calendar, Check, Clock, Users, X } from "lucide-react";
 import {
   formatShiftDuration,
   VolunteerStatusToReadableFormat,
@@ -63,8 +63,8 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
     : [];
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-      <Card className="lg:col-span-2">
+    <div className="flex flex-col gap-6">
+      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Calendário</CardTitle>
@@ -125,7 +125,7 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
                     "rounded-md border p-2 text-left hover:bg-accent transition-colors min-h-10",
                     isOtherMonth ? "opacity-50" : "cursor-pointer",
                     isToday &&
-                      "bg-primary text-primary-foreground border-primary"
+                      "bg-primary text-primary-foreground border-primary hover:bg-primary/80"
                   )}
                   onClick={() => hasShifts && setSelectedDay(day.date)}
                 >
@@ -191,6 +191,7 @@ function buildMonthGrid(current: Date) {
   // Preenche dias do mês anterior
   for (let i = 0; i < firstWeekDayIndex; i++) {
     const d = new Date(year, month, 1 - (firstWeekDayIndex - i));
+
     days.push({ date: d, isOtherMonth: true });
   }
 
@@ -223,7 +224,6 @@ function buildMonthGrid(current: Date) {
   }
 
   const headers = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-  console.log(headers, days);
   return { headers, days };
 }
 
@@ -231,6 +231,16 @@ function DayShiftDetails({ shift }: { shift: ShiftDto }) {
   const { data: full } = useShiftCompleteView(shift.id);
   const start = new Date(shift.startDate);
   const end = new Date(shift.endDate);
+
+  const confirmedVolunteers = shift.positions?.reduce(
+    (sum, p) => sum + (p.volunteersCount || 0),
+    0
+  );
+
+  const totalVolunteersNeeded = shift.positions?.reduce(
+    (sum, p) => sum + (p.requiredCount || 0),
+    0
+  );
 
   return (
     <Card className="border">
@@ -257,53 +267,75 @@ function DayShiftDetails({ shift }: { shift: ShiftDto }) {
         <div className="mt-2">
           <div className="text-sm font-medium flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Voluntários
+            Voluntários {confirmedVolunteers || 0} /{" "}
+            {totalVolunteersNeeded || 0}{" "}
           </div>
           {full?.positions?.length ? (
             <div className="mt-2 space-y-2">
-              {full.positions.map((pos) => (
-                <div key={pos.id} className="rounded-md border p-2">
-                  <div className="flex gap-2 items-center">
-                    <div className="w-2 h-2 bg-primary rounded-full" />
+              {full.positions.map((pos) => {
+                const allConfirmed =
+                  pos.volunteers.length > 0 &&
+                  pos.volunteers.every(
+                    (v) => v.status === VolunteerStatus.CONFIRMED
+                  );
 
-                    <span className="text-sm font-medium">
-                      {pos.positionName}
-                    </span>
-                  </div>
-                  {pos.volunteers.length > 0 ? (
-                    <ul className="mt-1 space-y-1">
-                      {pos.volunteers.map((v) => (
-                        <li
-                          key={v.id}
-                          className="flex items-center justify-between text-sm"
-                        >
-                          <div className="pl-4 flex items-center justify-center gap-2">
-                            <div
-                              className={cn(
-                                "w-1.5 h-1.5 rounded-full",
-                                v.status == VolunteerStatus.CANCELLED &&
-                                  "bg-red-400",
-                                v.status == VolunteerStatus.PENDING &&
-                                  "bg-amber-500",
-                                v.status == VolunteerStatus.CONFIRMED &&
-                                  "bg-green-600"
-                              )}
-                            />
-                            <span>{v.userName}</span>
-                          </div>
-                          <Badge variant="outline">
-                            {VolunteerStatusToReadableFormat(v.status)}
-                          </Badge>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Sem voluntários
+                const allCancelled =
+                  pos.volunteers.length > 0 &&
+                  pos.volunteers.every(
+                    (v) => v.status === VolunteerStatus.CANCELLED
+                  );
+
+                return (
+                  <div key={pos.id} className="rounded-md border p-2">
+                    <div className="flex gap-2 items-center">
+                      {allConfirmed ? (
+                        <Check className="w-4 h-4 text-green-600" />
+                      ) : allCancelled ? (
+                        <X className="w-4 h-4 text-red-600" />
+                      ) : (
+                        <div className="w-2 h-2 bg-primary rounded-full" />
+                      )}
+
+                      <span className="text-sm font-medium">
+                        {pos.positionName}
+                      </span>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {pos.volunteers.length > 0 ? (
+                      <ul className="mt-1 space-y-1">
+                        {pos.volunteers.map((v) => (
+                          <li
+                            key={v.id}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <div className="pl-4 flex items-center justify-center gap-2">
+                              <div
+                                className={cn(
+                                  "w-1.5 h-1.5 rounded-full",
+                                  v.status == VolunteerStatus.CANCELLED &&
+                                    "bg-red-400",
+                                  v.status == VolunteerStatus.PENDING &&
+                                    "bg-amber-500",
+                                  v.status == VolunteerStatus.CONFIRMED &&
+                                    "bg-green-600"
+                                )}
+                              />
+                              <span>{v.userName}</span>
+                            </div>
+                            <Badge variant="outline">
+                              {VolunteerStatusToReadableFormat(v.status)}
+                            </Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Sem voluntários
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="text-xs text-muted-foreground mt-1">
