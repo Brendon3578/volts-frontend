@@ -8,7 +8,15 @@ import {
 } from "../../hooks/useShifts";
 import type { ShiftDto } from "../../models/shift";
 import { format } from "date-fns";
-import { Calendar, Check, Clock, Users, X } from "lucide-react";
+import {
+  Calendar,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Users,
+  X,
+} from "lucide-react";
 import {
   formatShiftDuration,
   VolunteerStatusToReadableFormat,
@@ -73,7 +81,10 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
                 variant="outline"
                 onClick={() => setCurrentMonth(addMonthsSafe(currentMonth, -1))}
               >
-                Mês anterior
+                <span className="hidden md:block">Mês anterior</span>
+                <span className="block md:hidden">
+                  <ChevronLeft />
+                </span>
               </Button>
               <Button
                 variant="outline"
@@ -85,7 +96,10 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
                 variant="outline"
                 onClick={() => setCurrentMonth(addMonthsSafe(currentMonth, 1))}
               >
-                Próximo mês
+                <span className="hidden md:block">Próximo mês</span>
+                <span className="block md:hidden">
+                  <ChevronRight />
+                </span>
               </Button>
             </div>
           </div>
@@ -101,7 +115,7 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1.5 md:gap-2">
             {monthDays.headers.map((h) => (
               <div
                 key={h}
@@ -130,11 +144,11 @@ export function CalendarTab({ groupId }: CalendarTabProps) {
                   onClick={() => hasShifts && setSelectedDay(day.date)}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium">
                       {day.date.getDate()}
                     </span>
                     {hasShifts && (
-                      <Badge className="ml-2">
+                      <Badge className="ml-1 md:ml-2 px-1 md:px-2">
                         {(shiftsByDayMap.get(key) || []).length}
                       </Badge>
                     )}
