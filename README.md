@@ -1,5 +1,16 @@
 # Volts Frontend – Sistema de Gestão de Voluntários
 
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
+![Shadcn/ui](https://img.shields.io/badge/shadcn/ui-%23000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![React Query](https://img.shields.io/badge/-React%20Query-FF4154?style=for-the-badge&logo=react%20query&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+
 ## Integrantes
 
 - Adriano Barros
@@ -15,6 +26,20 @@ Este repositório contém o frontend, desenvolvido em React + TypeScript, respon
 Os usuários podem visualizar escalas, aplicar-se para posições, gerenciar grupos, editar informações da organização e atualizar seus perfis.
 
 O frontend se integra diretamente ao backend .NET via API REST, consumindo endpoints protegidos por JWT.
+
+## 🧰 Tecnologias Utilizadas
+
+- React 18
+- TypeScript
+- Vite
+- React Router DOM
+- React Query
+- Axios
+- React Hook Form
+- Zod
+- Shadcn/ui
+- Tailwind CSS
+- Lucide Icons
 
 ## ⚙️ Funcionalidades da Aplicação
 
@@ -180,20 +205,6 @@ erDiagram
     ShiftPosition ||--o{ ShiftPositionAssignment : "tem"
     User ||--o{ ShiftPositionAssignment : "se inscreve"
 ```
-
-## 🧰 Tecnologias Utilizadas
-
-- React 18
-- TypeScript
-- Vite
-- React Router DOM
-- React Query
-- Axios
-- React Hook Form
-- Zod
-- Shadcn/ui
-- Tailwind CSS
-- Lucide Icons
 
 ## 📁 Estrutura Geral do Projeto
 
