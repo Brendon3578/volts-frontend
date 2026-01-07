@@ -226,7 +226,7 @@ src/
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/seu-usuario/volts-frontend.git
+git clone https://github.com/Brendon3578/volts-frontend
 cd volts-frontend
 
 # 2. Instalar dependências
@@ -235,21 +235,69 @@ npm install
 
 # 3. Configurar variáveis de ambiente
 
-# Criar arquivo .env.development contendo:
+# Crie um arquivo .env.development ou .env.production na raiz do projeto.
+# Configure a variável VITE_API_URL com a URL da API do backend.
 
-VITE_API_URL=http://localhost:5000 ## url do backend
+# Cenário 1: API rodando via Docker
+# A porta padrão geralmente é 8080
+VITE_API_URL=http://localhost:8080
 
-# 4. Executar
+# Cenário 2: API rodando no Visual Studio (IIS/Kestrel)
+# A porta padrão HTTPS de desenvolvimento é geralmente 7290
+VITE_API_URL=https://localhost:7290
+
+# 4. Executar em modo de desenvolvimento
 
 npm run dev
-# Aplicação ficará disponível em:
-
-http://localhost:5173
+# Aplicação ficará disponível em: http://localhost:5173
 ```
+
+## 🐳 Docker (Opcional/Testes)
+
+O projeto inclui um `Dockerfile` configurado para criar uma imagem otimizada da aplicação frontend servida via Nginx.
+O uso do Docker neste contexto é focado em **estudos e testes locais**, simulando um ambiente de produção containerizado onde o frontend é servido como arquivos estáticos.
+
+### Por que um Dockerfile para o Frontend?
+
+O `Dockerfile` realiza o build da aplicação React (gerando os arquivos estáticos na pasta `dist`) e, em seguida, configura um servidor Nginx Alpine para servir esses arquivos. Isso garante que o frontend possa ser executado em qualquer ambiente que suporte containers, com alta performance e baixo consumo de recursos, sem depender de Node.js no ambiente de execução final.
+
+### Como rodar via Docker
+
+#### 1. Construir a imagem e Rodar o Container
+
+```sh
+# -------- AMBIENTE DE PRODUÇÃO --------
+# faz o build da imagem (dockerfile)
+docker build --target prod -t volts-frontend .
+
+# Executar o container
+# Mapeia a porta 80 do container para a porta 3000 da sua máquina
+docker run -p 3000:80 volts-frontend
+
+
+# -------- AMBIENTE DE DESENVOLVIMENTO --------
+# faz o build da imagem (dockerfile)
+docker build --target dev -t app-dev .
+
+# Executar o container
+# Mapeia a porta 5173 do container para a porta 5173 da sua máquina (padrão de desenvolvimento do vite)
+docker run -p 5173:5173 app-dev
+```
+
+#### 2. Acessar a aplicação
+
+Abra seu navegador em `http://localhost:3000` para produção e `http://localhost:5173` para desenvolvimento.
+
+> [!TIP]
+> Ao rodar via Docker, certifique-se de que a variável de ambiente `VITE_API_URL` foi configurada corretamente no momento do build ou passada via argumentos, pois o build do Vite "injeta" as variáveis de ambiente no código estático.
 
 ## 🛠️ Build e Deploy
 
 ```bash
+# Executar em ambiente de desenvolvimento, usando a variável .env.development
+npm run dev
+
+# Criação do artefato da aplicação e execução da aplicação em modo preview
 npm run build
 npm run preview
 ```
